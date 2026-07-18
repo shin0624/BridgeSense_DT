@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e8605c85e3aea2d468fe3653a26ad90d
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 216180
+  packageName: Gradient Texture Generator
+  packageVersion: 2.2.1
+  assetPath: Assets/LKHGames/GradientTextureGenerator/Script/GTGAssembly.asmdef
+  uploadId: 903178
