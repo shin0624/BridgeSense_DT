@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -20,6 +21,7 @@ namespace BridgeSenseDT.UI
         bool isSelected;
 
         Image borderTop, borderBottom, borderLeft, borderRight;
+        Coroutine borderGradientRoutine;
 
         public void Init(UIElevationDiagram owner, string segmentId, Color normalColor)
         {
@@ -79,40 +81,71 @@ namespace BridgeSenseDT.UI
         public void SetSelected(bool selected)
         {
             isSelected = selected;
+            background.color = normalColor;
+
+            if (borderGradientRoutine != null)
+            {
+                StopCoroutine(borderGradientRoutine);
+                borderGradientRoutine = null;
+            }
+
             if (selected)
-            {
-                if (owner.UseOutlineForSelection)
-                {
-                    background.color = normalColor;
-                    SetBorderVisible(true, owner.SelectedColor);
-                }
-                else
-                {
-                    SetBorderVisible(false, Color.clear);
-                    background.color = owner.SelectedColor;
-                }
-            }
+                borderGradientRoutine = StartCoroutine(AnimateSelectedBorderGradient());
             else
-            {
                 SetBorderVisible(false, Color.clear);
-                background.color = normalColor;
+        }
+
+        /// <summary>
+        /// 선택된 오브젝트를, 등급 색상을 selectedSaturationSteps단계 채도 부스트한 색이
+        /// 시계 방향(상→우→하→좌)으로 회전하며 밝아지는 그라데이션 형태로 테두리와 본체 색상 모두에 표시한다.
+        /// </summary>
+        IEnumerator AnimateSelectedBorderGradient()
+        {
+            Color dim = normalColor;
+            Color bright = normalColor;
+            for (int i = 0; i < owner.SelectedSaturationSteps; i++)
+                bright = GradeColorMap.BoostSaturation(bright, owner.SelectedSaturationBoost);
+
+            float phase = 0f;
+            while (true)
+            {
+                phase = Mathf.Repeat(phase + Time.deltaTime * owner.BorderGradientSpeed, 1f);
+
+                float wTop = ComputeEdgeWeight(0.0f, phase);
+                float wRight = ComputeEdgeWeight(0.25f, phase);
+                float wBottom = ComputeEdgeWeight(0.5f, phase);
+                float wLeft = ComputeEdgeWeight(0.75f, phase);
+
+                borderTop.color = Color.Lerp(dim, bright, wTop);
+                borderRight.color = Color.Lerp(dim, bright, wRight);
+                borderBottom.color = Color.Lerp(dim, bright, wBottom);
+                borderLeft.color = Color.Lerp(dim, bright, wLeft);
+
+                // 오브젝트 본체는 가장 가까운 테두리의 가중치를 따라가며 함께 밝아진다 (가시성 강화).
+                float objectWeight = Mathf.Max(Mathf.Max(wTop, wRight), Mathf.Max(wBottom, wLeft));
+                background.color = Color.Lerp(dim, bright, objectWeight);
+
+                yield return null;
             }
+        }
+
+        float ComputeEdgeWeight(float edgePosition, float phase)
+        {
+            // 두 위치 사이의 원형(0~1 루프) 거리를 0~0.5 범위로 계산한다.
+            float distance = Mathf.Abs(Mathf.DeltaAngle(edgePosition * 360f, phase * 360f)) / 360f;
+            return Mathf.Clamp01(1f - distance / owner.BorderGradientWidth);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
             if (isSelected) return;
-            if (owner.UseOutlineForHover)
-                SetBorderVisible(true, owner.HoverColor);
-            else
-                background.color = owner.HoverColor;
+            SetBorderVisible(true, GradeColorMap.Highlight(normalColor, owner.HoverHighlightBoost));
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
             if (isSelected) return;
             SetBorderVisible(false, Color.clear);
-            background.color = normalColor;
         }
 
         public void OnPointerClick(PointerEventData eventData)

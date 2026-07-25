@@ -50,13 +50,16 @@ namespace BridgeSenseDT.UI
         [SerializeField] float pierWidthPixels = 8f;
         [SerializeField] float labelHeightPixels = 20f;
 
-        [Header("호버 효과 (색상 직접 지정 가능)")]
-        [SerializeField] bool useOutlineForHover = false;
-        [SerializeField] Color hoverColor = new Color(1f, 1f, 1f, 0.25f);
+        [Header("호버 효과 (등급 색상을 흰색 쪽으로 밝게 보정해서 테두리로 표시)")]
+        [SerializeField, Range(0f, 1f)] float hoverHighlightBoost = 0.35f;
 
-        [Header("선택 효과 (색상 직접 지정 가능)")]
-        [SerializeField] bool useOutlineForSelection = true;
-        [SerializeField] Color selectedColor = new Color(1f, 0.549f, 0.239f, 0.9f);
+        [Header("선택 효과 (등급 색상의 채도를 selectedSaturationBoost만큼, selectedSaturationSteps번 중첩 적용)")]
+        [SerializeField, Range(0f, 1f)] float selectedSaturationBoost = 0.35f;
+        [SerializeField, Range(1, 5)] int selectedSaturationSteps = 2;
+
+        [Header("선택 시 테두리 그라데이션 회전 효과 (시계 방향)")]
+        [SerializeField] float borderGradientSpeed = 0.5f;                 // 초당 회전 수 (바퀴/초)
+        [SerializeField, Range(0.1f, 0.5f)] float borderGradientWidth = 0.35f; // 하이라이트가 퍼지는 범위(0~0.5)
 
         [Header("4방향 테두리 두께")]
         [SerializeField] float borderThickness = 2f;
@@ -67,10 +70,11 @@ namespace BridgeSenseDT.UI
         [SerializeField] Color labelColor = new Color(0.969f, 0.945f, 0.902f, 1f);
 
         public float BorderThickness => borderThickness;
-        public Color HoverColor => hoverColor;
-        public Color SelectedColor => selectedColor;
-        public bool UseOutlineForHover => useOutlineForHover;
-        public bool UseOutlineForSelection => useOutlineForSelection;
+        public float HoverHighlightBoost => hoverHighlightBoost;
+        public float SelectedSaturationBoost => selectedSaturationBoost;
+        public int SelectedSaturationSteps => selectedSaturationSteps;
+        public float BorderGradientSpeed => borderGradientSpeed;
+        public float BorderGradientWidth => borderGradientWidth;
 
         /// <summary>경간 또는 교각을 클릭했을 때 해당 id를 전달하는 이벤트.</summary>
         public event Action<string> OnSegmentSelected;
