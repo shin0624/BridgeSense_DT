@@ -147,12 +147,7 @@ namespace BridgeSenseDT.UI
         }
 
         /// <summary>Play 모드면 Destroy, Edit 모드면 DestroyImmediate로 안전하게 제거.</summary>
-        void SafeDestroy(UnityEngine.Object obj)
-        {
-            if (obj == null) return;
-            if (Application.isPlaying) Destroy(obj);
-            else DestroyImmediate(obj);
-        }
+        void SafeDestroy(UnityEngine.Object obj) => EditorRebuildUtility.SafeDestroy(obj);
 
         void BuildHierarchy()
         {

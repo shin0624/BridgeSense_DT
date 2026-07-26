@@ -108,15 +108,7 @@ namespace BridgeSenseDT.UI
         }
 #endif
 
-        void ClearChildren()
-        {
-            for (int i = transform.childCount - 1; i >= 0; i--)
-            {
-                var child = transform.GetChild(i).gameObject;
-                if (Application.isPlaying) Destroy(child);
-                else DestroyImmediate(child);
-            }
-        }
+        void ClearChildren() => EditorRebuildUtility.SafeDestroyChildren(transform);
 
         /// <summary>외부(국토교통부 스펙 JSON 등)에서 경간·교각 데이터를 통째로 다시 지정한다.</summary>
         public void SetData(List<ElevationSpanData> newSpans, List<ElevationPierData> newPiers = null)
