@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,8 +12,10 @@ public class MainDashboardManager : MonoBehaviour
 
     public static MainDashboardManager Instance {get; private set;}
     private MainDashboardPanelState currentPanelState = MainDashboardPanelState.Input;// 기본 활성화된 패널은 InputAndAnalyzePanel
+    private HashSet<GameObject> activePopupPanels = new HashSet<GameObject>();// 활성화된 팝업 패널의 GameObject를 저장하는 HashSet
     [SerializeField] private GameObject inputAndAnalyzePanel;
     [SerializeField] private GameObject overviewPanel;
+    [SerializeField] private GameObject popupPanelParent;// 팝업패널 부모 오브젝트
 
     private void Awake() 
     {
@@ -52,11 +55,37 @@ public class MainDashboardManager : MonoBehaviour
         }
     }
 
-    public void OpenPopupPanel(GameObject popupPanel)// 팝업 패널을 여는 메서드
+    public void OpenPopupPanel(GameObject popupPanel)// 팝업 패널을 여는 메서드. popupPanel은 항상 팝업 부모의 자식 팝업
+    {
+        if(popupPanelParent!=null && !popupPanelParent.activeSelf)// 팝업패널 부모가 비활성화 상태이면 활성화
+        {
+            popupPanelParent.SetActive(true);
+        }
+
+        if(popupPanel != null)
+        {
+            if(!activePopupPanels.Contains(popupPanel))// 이미 활성화된 팝업 패널이 아니면
+            {   
+                activePopupPanels.Add(popupPanel);// 활성화된 팝업 패널 목록에 추가
+                popupPanel.SetActive(true);// 팝업 패널 활성화
+            }
+            
+        }
+    }
+
+    public void ClosePopupPanel(GameObject popupPanel)// 팝업 패널을 닫는 메서드. popupPanel은 항상 팝업 부모의 자식 팝업
     {
         if(popupPanel != null)
         {
-            popupPanel.SetActive(true);
+            if(activePopupPanels.Contains(popupPanel))// 활성화된 팝업 패널이면
+            {
+                activePopupPanels.Remove(popupPanel);// 활성화된 팝업 패널 목록에서 제거
+                popupPanel.SetActive(false);// 팝업 패널 비활성화
+                if(activePopupPanels.Count == 0)// 활성화된 팝업 패널이 없으면
+                {
+                    popupPanelParent.SetActive(false);// 팝업패널 부모 비활성화
+                }
+            }
         }
     }
 
@@ -64,8 +93,6 @@ public class MainDashboardManager : MonoBehaviour
     {
         return currentPanelState;
     }
-
-
 
     private void OnDestroy()
     {

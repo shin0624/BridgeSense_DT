@@ -10,10 +10,6 @@ public class Switching3DPanel : MonoBehaviour
         switching3DPanelButton.onClick.AddListener(OnSwitchingButtonClicked);
     }
 
-    void Update()
-    {
-        
-    }
 
     private void OnSwitchingButtonClicked()// Input 패널에서 "3d모델로 확인하기"버튼 클릭 시 호출되는 메서드
     {
@@ -22,5 +18,10 @@ public class Switching3DPanel : MonoBehaviour
         {
             MainDashboardManager.Instance.SwitchToOverviewPanel();// OverviewPanel로 전환
         }  
+    }
+
+    private void OnDestroy() 
+    {
+        switching3DPanelButton.onClick.RemoveListener(OnSwitchingButtonClicked);
     }
 }
