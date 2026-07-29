@@ -1,0 +1,9 @@
+transformers>=4.44
+accelerate
+pycocotools
+pillow
+numpy
+tensorboard
+evaluate
+onnx
+onnxruntime
