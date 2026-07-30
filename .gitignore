@@ -101,3 +101,4 @@ ai/wandb/
 .env
 /aihubshell
 /.claude/
+/.pod_home/
