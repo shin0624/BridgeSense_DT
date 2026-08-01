@@ -1,6 +1,7 @@
-transformers>=4.44
+transformers==4.49.0  # torch 2.4.1(cu124, 컨테이너에 사전 설치된 버전)과 호환되는 최신 4.x. transformers>=5.0은 torch.distributed.tensor.DTensor를 요구해서 torch 2.4.1에서 import 자체가 깨짐
 accelerate
 pycocotools
+torchmetrics
 pillow
 numpy
 tensorboard

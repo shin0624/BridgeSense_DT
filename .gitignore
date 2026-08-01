@@ -93,6 +93,7 @@ ai/wandb/
 # AI-Hub 원본 데이터 (git 커밋 금지, /workspace 로컬 보관)
 /data/aihub/
 /data/aihub_extracted/
+/data/aihub_extracted_full/
 /data/coco_format/
 /data/*.zip
 
