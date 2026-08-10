@@ -8,8 +8,15 @@
 
 ## 0. 공통 규칙
 
-- **opset**: 7~25 범위(Unity Sentis 확인된 지원 범위) 내에서 **17로 고정** (Resize의
-  bilinear 모드가 필요한 SegFormer 때문에 opset 11 이상 필요 — 17이면 여유 있게 충족)
+- **opset**: 7~25 범위(Unity Sentis 확인된 지원 범위) 내에서 **18로 고정**. 원래 17로
+  잡았는데(Resize에 필요한 opset 11 이상은 여유 있게 충족), **`torch.onnx.export`의
+  레거시 tracing 방식으로 RT-DETR을 내보내니 opset 값과 무관하게 출력 자체가 틀렸다**
+  (PyTorch 대비 logits 최대 오차 1.24 — deformable attention처럼 데이터 의존적 제어흐름이
+  많은 모델을 tracing이 제대로 못 담아서 그래프가 실제 연산과 달라짐). `dynamo=True`
+  (torch.export 기반) exporter로 바꾸니 오차가 0.00002 수준으로 정상화됐는데, 이 dynamo
+  exporter가 opset 18 미만은 변환 자체를 거부해서 18로 올림. **`export_onnx.py`는 항상
+  `dynamo=True`로 내보내고, 익스포트 후 반드시 `verify_onnx.py`로 오차를 직접 확인할 것**
+  — "에러 없이 저장됨"과 "출력이 실제로 맞음"은 다른 문제다.
 - **배치 축만 동적**(`batch`), 나머지 차원은 고정 shape으로 익스포트
 - **후처리는 그래프 밖(Unity C#)에서 수행**이 원칙. 단, SegFormer의 업샘플처럼 "안 넣으면
   Unity에서 같은 연산을 재구현해야 하는" 경우는 예외적으로 그래프 안에 포함(2.3절 참고)
@@ -102,7 +109,7 @@ class SegformerExportWrapper(nn.Module):
 ```
 
 `F.interpolate(mode="bilinear")` → ONNX `Resize` 연산자로 변환됨, opset 11 이상 필요
-(0절에서 opset 17로 고정했으므로 문제없음).
+(0절에서 opset 18로 고정했으므로 문제없음).
 
 ### 2.4 Unity 쪽 후처리 (그래프 밖)
 
@@ -145,6 +152,9 @@ SegFormer는 배경 클래스가 0번을 차지하므로 **전부 +1 shift**됨.
 - 위 전처리·shape 값은 **베이스 체크포인트**(파인튜닝 전) 설정 기준으로 실측한 것 — 학습
   코드(`train_rtdetr.py`, `train_segformer.py`)에서 이 전처리를 그대로 유지하는지 반드시
   확인하고, 바꿨다면 이 문서도 같이 업데이트할 것
-- opset 17 익스포트가 실제로 Sentis에서 두 모델(특히 SegFormer의 `Resize`) 다 문제없이
-  로드되는지 `verify_onnx.py` + Unity 쪽에서 실기 검증 필요
+- RT-DETR: `verify_onnx.py`로 onnxruntime CPU 추론이 PyTorch 원본과 일치함을 확인함
+  (logits 최대 오차 0.000021, pred_boxes 0.000002). **단, Unity Sentis에서 opset 18 +
+  dynamo 익스포트 그래프가 실제로 로드·실행되는지는 아직 미검증** — Unity 쪽에서 실기 확인 필요
+- SegFormer: 아직 `segformer.onnx` 자체를 안 만듦(본 학습 진행 중). 학습 끝나면 RT-DETR과
+  동일하게 `export_onnx.py`(dynamo 방식) + `verify_onnx.py`로 검증할 것
 - score/threshold 기본값(0.5 등)은 실제 검증 데이터로 PR curve 확인 후 조정

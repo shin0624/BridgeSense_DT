@@ -51,6 +51,7 @@ def class_from_filename(stem: str):
     prefix = stem[:2].lower()
     if prefix == NORMAL_PREFIX:
         return None  # 정상데이터: 어노테이션 없음
+    
     if prefix not in PREFIX_TO_CLASS:
         raise ValueError(f"알 수 없는 파일명 접두 코드: {stem!r} (prefix={prefix!r})")
     return PREFIX_TO_CLASS[prefix]
@@ -65,6 +66,7 @@ def polygon_to_bbox_and_area(points, width, height):
     # Shoelace formula
     area = 0.0
     n = len(points)
+    
     for i in range(n):
         x1, y1 = xs[i], ys[i]
         x2, y2 = xs[(i + 1) % n], ys[(i + 1) % n]
@@ -95,12 +97,14 @@ def convert(images_dir: Path, labels_dir: Path, out_path: Path):
     for label_path in label_files:
         stem = label_path.stem
         image_path = images_by_stem.get(stem)
+        
         if image_path is None:
             skipped_no_image += 1
             continue
 
         try:
             class_name = class_from_filename(stem)
+            
         except ValueError as e:
             print(f"경고: {e} — 건너뜀")
             continue
@@ -121,9 +125,11 @@ def convert(images_dir: Path, labels_dir: Path, out_path: Path):
         if class_name is not None:
             for shape in raw.get("shapes", []):
                 points = shape.get("points", [])
+                
                 if len(points) < 3:
                     skipped_bad_shape += 1
                     continue
+                
                 bbox, area = polygon_to_bbox_and_area(points, width, height)
                 if bbox[2] <= 0 or bbox[3] <= 0:
                     skipped_bad_shape += 1
