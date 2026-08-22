@@ -111,9 +111,9 @@ public class ImageUploader : MonoBehaviour
         errorText.text = "등록한 이미지가 표시됩니다";
     }
 
-    public Texture GetCurrentThumbnailTexture()// 현재 텍스처를 읽는 접근자 메서드
+    public Texture2D GetCurrentThumbnailTexture()// 현재 텍스처를 읽는 접근자 메서드
     {
-        return thumbnailImage.texture;
+        return thumbnailImage.texture as Texture2D; // RawImage.texture는 Texture 타입이지만, LoadImageRoutine에서 항상 Texture2D를 넣으므로 안전하게 캐스팅됨
     }
 
     private void OnDisable() // 훅 해제 - OnEnable과 반드시 짝을 맞춰야 패널이 꺼졌다 켜졌다 할 때 중복 등록되지 않음

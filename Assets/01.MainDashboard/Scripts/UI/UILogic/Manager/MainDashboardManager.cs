@@ -33,6 +33,11 @@ public class MainDashboardManager : MonoBehaviour
     {
         inputAndAnalyzePanel.SetActive(true);// InputAndAnalyzePanel을 기본 활성화
         overviewPanel.SetActive(false);
+
+        // 팝업패널 부모는 레이캐스트 타겟이라서 활성화된 채로 두면 메인 대시보드 클릭이 전부 막힌다.
+        // 씬에 저장된 상태에 의존하지 않도록 시작 시 항상 꺼둔 상태에서 출발한다.
+        popupPanelParent.SetActive(false);
+        activePopupPanels.Clear();// 부모를 껐으므로 열린 팝업 목록도 실제 상태(비어있음)와 맞춰둔다
     }
 
     public void SwitchToOverviewPanel()// InputAndAnalyzePanel에서 OverviewPanel로 전환하는 메서드
