@@ -1,0 +1,21 @@
+# torch/torchvision/torchaudio는 컨테이너 시스템(전역)에 2.4.1+cu124가 깔려있지만,
+# 이 Pod의 GPU(RTX PRO 4000 Blackwell, sm_120)는 2.4.1이 지원하는 아키텍처(~sm_90)보다
+# 최신이라 실제 CUDA 연산이 전부 실패한다("no kernel image is available"). 그래서 venv
+# 안에서만 아래 버전으로 덮어써서 사용한다(시스템 전역 설치는 건드리지 않음).
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.7.1+cu128
+torchvision==0.22.1+cu128
+torchaudio==2.7.1+cu128
+
+transformers==4.49.0  # torch>=5.0은 torch.distributed.tensor.DTensor를 요구해서 구버전 torch에서 import가 깨졌던 이력이 있어 4.x로 고정. torch 2.7.1과는 정상 동작 확인됨
+accelerate
+pycocotools
+torchmetrics
+scipy  # RT-DETR의 Hungarian Matcher(RTDetrHungarianMatcher)가 내부적으로 필요
+pillow
+numpy
+tensorboard
+evaluate
+onnx
+onnxruntime
+onnxscript  # torch.onnx.export(dynamo=True)에 필요. 레거시 tracing exporter는 RT-DETR의 deformable attention을 잘못 변환해서(PyTorch 대비 logits 오차 1.24) dynamo 방식으로 전환함 — export_onnx.py 참고

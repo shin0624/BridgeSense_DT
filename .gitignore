@@ -73,3 +73,33 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# --- ai/ (Python, RT-DETR v2 / SegFormer 학습) ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# 학습 산출물·체크포인트·ONNX (HuggingFace Hub 또는 /workspace 로컬 보관용, git 커밋 금지)
+ai/checkpoints/
+ai/outputs/
+ai/wandb/
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# AI-Hub 원본 데이터 (git 커밋 금지, /workspace 로컬 보관)
+/data/aihub/
+/data/aihub_extracted/
+/data/aihub_extracted_full/
+/data/coco_format/
+/data/*.zip
+
+# 기타 임시 파일
+/BridgeSenseDT/
+.env
+/aihubshell
+/.claude/
+/.pod_home/
