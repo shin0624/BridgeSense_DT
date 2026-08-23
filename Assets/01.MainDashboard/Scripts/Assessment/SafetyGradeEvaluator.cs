@@ -38,7 +38,7 @@ namespace BridgeSenseDT.Assessment
     /// </summary>
     public enum BridgeChecklistItem
     {
-        // ── 주요시설 (표 3-2) ──
+        // 주요시설 (표 3-2)
         Girder,          // 거더(RC 및 PSC/강재 등)의 균열 및 손상 상태
         Slab,            // 바닥판(RC 및 PSC/강재 등)의 균열 및 손상 상태
         CableAnchorage,  // 케이블 부재, 정착부(정착구) 및 주변 손상 상태
@@ -46,14 +46,14 @@ namespace BridgeSenseDT.Assessment
         PierAbutment,    // 교각(주탑 포함) 및 교대(날개벽 포함)의 균열 및 손상 상태
         Foundation,      // 기초의 세굴·침하 및 손상 상태
 
-        // ── 일반시설 (표 2-4) ──
+        // 일반시설 (표 2-4)
         Pavement,        // 교면포장, 바포장면
         ExpansionJoint,  // 신축이음
         CrossBeam,       // 가로보, 세로보
         Drainage,        // 배수시설
         Parapet,         // 난간(방호벽, 방호울타리) 및 연석
 
-        // ── 부대시설 (표 2-4) ──
+        // 부대시설 (표 2-4)
         RetainingWall,   // 옹벽, 축대, 석축
         Slope,           // 비탈면
         SafetyFacility,  // 안전 및 기타시설(방음벽 등)
@@ -113,7 +113,7 @@ namespace BridgeSenseDT.Assessment
     /// </summary>
     public static class SafetyGradeEvaluator
     {
-        // ── 표 2-5: 체크리스트 평가항목의 점수 기준 ──
+        // 표 2-5: 체크리스트 평가항목의 점수 기준
         public static int StateToScore(char state)
         {
             switch (char.ToLower(state))
@@ -127,7 +127,7 @@ namespace BridgeSenseDT.Assessment
             }
         }
 
-        // ── 표 2-3: 시설영역별 가중치 ──
+        // 표 2-3: 시설영역별 가중치
         public const float WeightMajor = 60f;
         public const float WeightGeneral = 20f;
         public const float WeightAncillary = 20f;

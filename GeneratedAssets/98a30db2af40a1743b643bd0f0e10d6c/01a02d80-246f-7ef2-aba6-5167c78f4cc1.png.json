@@ -1,0 +1,41 @@
+{
+    "asset": "98a30db2af40a1743b643bd0f0e10d6c",
+    "fileName": "01a02d80-246f-7ef2-aba6-5167c78f4cc1.png",
+    "prompt": "A vertical SIDEBAR panel sprite for a bridge digital twin dashboard UI. Tall rectangular panel. The LEFT edge and its two left corners are perfectly SHARP with 0 curvature (straight square corners). The RIGHT edge has strongly ROUNDED corners (large rounded radius, about 28% curvature). Flat vector design. The panel is filled with the exact dark charcoal background texture with warm rust-orange corner glow from the provided reference image (use the reference image as the panel fill/background). A crisp solid rust-orange (#C05F25) outline border traces the panel shape — square on the left, rounded on the right. No text, no icons, empty interior. Fully transparent outside the panel shape. Modern industrial dashboard aesthetic.",
+    "negativePrompt": "",
+    "model": "flux-2-dev",
+    "modelName": "Flux 2 (Dev)",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "88feb6aecb298bf49ba597d7d555e545",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 512,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0,
+    "dynamicParams": {
+        "serializedData": []
+    }
+}
