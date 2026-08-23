@@ -1,0 +1,41 @@
+{
+    "asset": "f77df7ac78a1ca342bb98fcaf0d0267f",
+    "fileName": "01a02d54-20ff-7b32-b483-c057daf58f72.png",
+    "prompt": "A wide horizontal header bar for a bridge digital twin dashboard UI. Long thin rounded rectangle, flat vector design. Soft cream / off-white (#F5E6DC) fill with a bold rust-orange (#AE511B) left-edge accent block and thin rust-orange bottom underline. No text, no icons, empty. Transparent background above and below the bar. Clean modern industrial dashboard aesthetic matching the provided reference image style.",
+    "negativePrompt": "",
+    "model": "flux-2-dev",
+    "modelName": "Flux 2 (Dev)",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "88feb6aecb298bf49ba597d7d555e545",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1536,
+        "height": 256
+    },
+    "spriteSheet": false,
+    "duration": 0.0,
+    "dynamicParams": {
+        "serializedData": []
+    }
+}

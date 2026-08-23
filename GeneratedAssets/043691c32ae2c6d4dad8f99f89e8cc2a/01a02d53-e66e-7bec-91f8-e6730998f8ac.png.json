@@ -1,0 +1,41 @@
+{
+    "asset": "043691c32ae2c6d4dad8f99f89e8cc2a",
+    "fileName": "01a02d53-e66e-7bec-91f8-e6730998f8ac.png",
+    "prompt": "A small section title bar / sub-header pill for a dashboard widget. Short rounded rectangle tab, flat vector design. Rust-orange (#AE511B) solid fill with soft cream (#F5E6DC) rounded corners, subtle shadow. No text, empty. Left-aligned within the frame, fully transparent background around it. Clean modern industrial digital twin dashboard aesthetic matching the provided reference image style.",
+    "negativePrompt": "",
+    "model": "flux-2-dev",
+    "modelName": "Flux 2 (Dev)",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "88feb6aecb298bf49ba597d7d555e545",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 768,
+        "height": 192
+    },
+    "spriteSheet": false,
+    "duration": 0.0,
+    "dynamicParams": {
+        "serializedData": []
+    }
+}

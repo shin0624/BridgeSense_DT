@@ -60,8 +60,28 @@ public class MainDashboardManager : MonoBehaviour
         }
     }
 
+    // 팝업 부모 자체를 팝업으로 넘기는 것을 막는 검사.
+    // 부모는 팝업들의 컨테이너이자 클릭을 막는 모달 배경이라, 켜고 끄는 판단은 이 매니저가 활성 팝업 수를 보고 스스로 한다.
+    // 밖에서 부모를 직접 여닫으면 아직 열려 있는 팝업이 논리적으로는 열린 채 화면에서만 사라지는 상태가 된다.
+    // 이전에는 부모를 넘겨도 조용히 무시돼서 원인을 찾기 어려웠으므로 명시적으로 알린다.
+    private bool IsPopupParent(GameObject target)
+    {
+        if(target != popupPanelParent)
+        {
+            return false;
+        }
+
+        Debug.LogError("팝업 부모(popupPanelParent)는 개별 팝업으로 여닫을 수 없습니다. 부모의 활성화는 MainDashboardManager가 자동으로 처리합니다.");
+        return true;
+    }
+
     public void OpenPopupPanel(GameObject popupPanel)// 팝업 패널을 여는 메서드. popupPanel은 항상 팝업 부모의 자식 팝업
     {
+        if(IsPopupParent(popupPanel))
+        {
+            return;
+        }
+
         if(popupPanelParent!=null && !popupPanelParent.activeSelf)// 팝업패널 부모가 비활성화 상태이면 활성화
         {
             popupPanelParent.SetActive(true);
@@ -80,6 +100,11 @@ public class MainDashboardManager : MonoBehaviour
 
     public void ClosePopupPanel(GameObject popupPanel)// 팝업 패널을 닫는 메서드. popupPanel은 항상 팝업 부모의 자식 팝업
     {
+        if(IsPopupParent(popupPanel))
+        {
+            return;
+        }
+
         if(popupPanel != null)
         {
             if(activePopupPanels.Contains(popupPanel))// 활성화된 팝업 패널이면

@@ -10,7 +10,12 @@ namespace BridgeSenseDT.Assessment
         public string EntryId;                  // InputImageObject의 등록 순번
         public string CapturedPart;             // 사용자가 입력한 촬영 부재 문자열
         public Texture2D Thumbnail;             // 분석 대상 이미지 - 평가에는 쓰이지 않고 결과 카드에 그대로 실어 보내기 위한 값
-        public BridgeAnalysisResult Analysis;   // AiInferenceManager.AnalyzeImage 결과
+
+        // 이미 추출이 끝난 결함 목록.
+        // BridgeAnalysisResult(AI 원본 출력)가 아니라 추출 결과를 받는 이유는 입력 경로가 둘이기 때문이다.
+        // 방금 추론한 경우에는 DefectExtractor.Extract로 만들어 넣고,
+        // 저장본을 불러온 경우에는 파일에 기록돼 있던 결함 목록을 그대로 넣는다(AI 재실행 불필요).
+        public List<DetectedDefect> Defects;
     }
 
     /// <summary>AnalyzeResultObject 1개에 표시할 이미지 단위 평가 결과.</summary>
@@ -60,10 +65,10 @@ namespace BridgeSenseDT.Assessment
 
             foreach (var input in inputs)
             {
-                var defects = DefectExtractor.Extract(input.Analysis);
+                var defects = input.Defects ?? new List<DetectedDefect>();
                 bool resolved = SafetyGradeEvaluator.TryParseChecklistItem(input.CapturedPart, out var item);
 
-                // ── 이미지 단위 평가 (AnalyzeResultObject 표시용) ──
+                // 이미지 단위 평가 (AnalyzeResultObject 표시용)
                 // 해석 실패 시에도 화면에는 결과를 보여줘야 하므로, 등급 산정에는 항목 종류가
                 // 영향을 주지 않는다는 점을 이용해 임시 항목으로 평가만 수행한다.
                 var evaluation = SafetyGradeEvaluator.EvaluateChecklistItem(
@@ -93,7 +98,7 @@ namespace BridgeSenseDT.Assessment
                     Evaluation = evaluation,
                 });
 
-                // ── 교량 단위 집계용 누적 ──
+                // 교량 단위 집계용 누적
                 if (!resolved)
                 {
                     // 어느 부재인지 모르는 사진을 임의 항목(특히 주요시설)에 넣으면 가중치가 왜곡되므로
@@ -110,7 +115,7 @@ namespace BridgeSenseDT.Assessment
                 bucket.AddRange(defects);
             }
 
-            // ── 교량 단위 종합 평가 ──
+            // 교량 단위 종합 평가
             var evaluations = defectsByItem
                 .Select(pair => SafetyGradeEvaluator.EvaluateChecklistItem(
                     pair.Key,
