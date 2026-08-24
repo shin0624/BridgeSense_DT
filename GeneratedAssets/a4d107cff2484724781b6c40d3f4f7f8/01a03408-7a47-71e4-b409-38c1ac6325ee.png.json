@@ -1,0 +1,41 @@
+{
+    "asset": "a4d107cff2484724781b6c40d3f4f7f8",
+    "fileName": "01a03408-7a47-71e4-b409-38c1ac6325ee.png",
+    "prompt": "A square UI panel background with an elegant edge-lighting gradient that fills the ENTIRE canvas edge to edge with no margins, no borders, no frame outline, no rounded panel shape — the gradient must completely fill the whole image. The center is deep near-black dark brown (#150f0a to #1a120c), and a very subtle, dim warm amber glow (#4a2f18, faint) radiates outward from the center toward all four edges (top, bottom, left, right), softly illuminating the borders like gentle rim lighting. The border edges glow faintly with warm amber light while the center stays dark for readability. Keep the light intensity low and faint. Very smooth, clean, soft diffused lighting, no text, no icons, no objects, no harsh lines. Refined, premium dashboard UI aesthetic, matching the color palette of the provided reference image.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "88feb6aecb298bf49ba597d7d555e545",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0,
+    "dynamicParams": {
+        "serializedData": []
+    }
+}

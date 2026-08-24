@@ -11,10 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/04.Scenes/MainDashboardScene.unity
     guid: 5045406c2181ace4fb158575e0d14328
-  - enabled: 1
+  - enabled: 0
     path: Assets/04.Scenes/SimulationScene.unity
     guid: ab1960bccb9377741aeaf1c5dc46ce06
-  - enabled: 1
+  - enabled: 0
     path: Assets/04.Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:

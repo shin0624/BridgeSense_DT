@@ -88,6 +88,17 @@ namespace BridgeSenseDT.BridgeData
             return string.IsNullOrEmpty(value) ? string.Empty : value.Replace(" ", string.Empty);
         }
 
+        /// <summary>
+        /// 자료를 미리 읽어둔다. StartScene의 로딩 화면에서 호출한다.
+        ///
+        /// 이 클래스는 static이라 씬이 바뀌어도 읽어둔 색인이 그대로 남는다.
+        /// 미리 부르지 않으면 3D 뷰어를 처음 열 때 8MB를 파싱하느라 화면이 한 번 멈춘다.
+        /// </summary>
+        public static void Preload()
+        {
+            EnsureLoaded();
+        }
+
         private static void EnsureLoaded()
         {
             if (loadAttempted)
