@@ -63,6 +63,18 @@ namespace BridgeSenseDT.Session
         public float maskAreaRatio;
         public float estimatedWidthMm;
         public bool isStructurallyCritical;
+
+        // 결함 위치 사각형. SegFormer 마스크에서 뽑은 값이며 마스크 자체는 저장하지 않는다.
+        public List<DefectBoxDto> boxes = new List<DefectBoxDto>();
+    }
+
+    /// <summary>결함 위치 사각형 1개. 0~1 정규화 좌표, 좌상단 원점.</summary>
+    public class DefectBoxDto
+    {
+        public float x1;
+        public float y1;
+        public float x2;
+        public float y2;
     }
 
     public class AssessmentSnapshotDto

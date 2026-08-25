@@ -37,6 +37,9 @@ public static class BridgeSpecImporter
     private const string ColumnSuper = "상부구조";
     private const string ColumnSub = "하부구조";
     private const string ColumnYear = "준공년도";
+    private const string ColumnLength = "총길이";
+    private const string ColumnSpanCount = "경간수";
+    private const string ColumnMaxSpan = "최대경간장";
 
     [MenuItem("BridgeSense/Data/교량 제원 데이터 생성")]
     public static void Import()
@@ -164,6 +167,9 @@ public static class BridgeSpecImporter
             sup = ReadString(row, ColumnSuper),
             sub = ReadString(row, ColumnSub),
             year = ReadString(row, ColumnYear),
+            len = ReadString(row, ColumnLength),
+            spans = ReadString(row, ColumnSpanCount),
+            maxSpan = ReadString(row, ColumnMaxSpan),
         };
     }
 

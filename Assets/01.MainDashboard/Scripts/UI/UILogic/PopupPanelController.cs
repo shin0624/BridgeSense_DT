@@ -37,7 +37,13 @@ public class PopupPanelController : MonoBehaviour
     // 그 결과 다른 팝업을 닫아도 대시보드 클릭이 막히는 문제가 생긴다.
     private void OpenSideToolbar()
     {
-        sideToolbar.SetActive(true);
+        // SlidingPanel이 붙어 있으면 밀려 들어오는 연출로 연다. 없으면 그냥 켠다.
+        var slider = sideToolbar.GetComponent<BridgeSenseDT.UI.SlidingPanel>();
+
+        if (slider != null)
+            slider.Show();
+        else
+            sideToolbar.SetActive(true);
     }
 
     private void OpenSecurityLevelPopup()

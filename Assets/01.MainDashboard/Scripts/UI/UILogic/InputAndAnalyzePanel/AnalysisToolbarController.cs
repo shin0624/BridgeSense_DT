@@ -1,5 +1,6 @@
 using System;
 using BridgeSenseDT.Session;
+using BridgeSenseDT.UI;
 using Ookii.Dialogs;
 using TMPro;
 using UnityEngine;
@@ -121,6 +122,12 @@ public class AnalysisToolbarController : MonoBehaviour
     // PopupPanelController.OpenSideToolbar와 짝을 이룬다.
     private void OnCloseButtonClicked()
     {
-        gameObject.SetActive(false);
+        // SlidingPanel이 붙어 있으면 밀려 나가는 연출을 마친 뒤 꺼진다.
+        var slider = GetComponent<SlidingPanel>();
+
+        if (slider != null)
+            slider.Hide();
+        else
+            gameObject.SetActive(false);
     }
 }
