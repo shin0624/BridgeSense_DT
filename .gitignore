@@ -103,3 +103,8 @@ ai/wandb/
 /aihubshell
 /.claude/
 /.pod_home/
+/data/*.json
+/data/*.csv
+/data/*.xlsx
+/data/*.xls
+/Assets/UI_Asset

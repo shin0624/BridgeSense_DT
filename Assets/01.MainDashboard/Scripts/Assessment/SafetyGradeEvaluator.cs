@@ -385,6 +385,34 @@ namespace BridgeSenseDT.Assessment
             }
         }
 
+        /// <summary>
+        /// 촬영 부재 입력을 부재 종류와 부재 번호로 함께 해석한다.
+        ///
+        /// 안전점검 실무에서는 지침에 따라 도면·보고서상 모든 부재에 고유 번호를 부여하므로
+        /// 사용자가 "교각7", "교각 7", "교각 7번"처럼 번호를 붙여 입력할 수 있다.
+        /// 번호를 적지 않으면 componentIndex가 0이 되고, 그때는 종류만으로 처리한다.
+        /// </summary>
+        public static bool TryParseCapturedPart(string capturedPart, out BridgeChecklistItem item, out int componentIndex)
+        {
+            componentIndex = 0;
+
+            if (!TryParseChecklistItem(capturedPart, out item))
+                return false;
+
+            componentIndex = ExtractComponentIndex(capturedPart);
+            return true;
+        }
+
+        /// <summary>문자열에서 처음 나타나는 정수를 부재 번호로 뽑는다. 없으면 0.</summary>
+        public static int ExtractComponentIndex(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return 0;
+
+            var match = System.Text.RegularExpressions.Regex.Match(text, @"\d+");
+            return match.Success && int.TryParse(match.Value, out int parsed) ? parsed : 0;
+        }
+
         public static string GetChecklistItemName(BridgeChecklistItem item)
         {
             switch (item)

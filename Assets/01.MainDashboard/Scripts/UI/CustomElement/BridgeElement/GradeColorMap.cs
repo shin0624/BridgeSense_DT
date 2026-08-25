@@ -49,6 +49,29 @@ namespace BridgeSenseDT.UI
         }
 
         /// <summary>
+        /// 등급을 손상 목록의 "심각도" 표기로 바꾼다.
+        /// 등급 라벨(우수/양호/보통/미흡/불량)은 시설물 상태를 가리키는 반면
+        /// 심각도는 해당 손상이 얼마나 급한지를 가리키므로 척도를 분리한다.
+        /// </summary>
+        public static string GetSeverityLabel(string grade)
+        {
+            switch (grade)
+            {
+                case "A":
+                case "B":
+                    return "낮음";
+                case "C":
+                    return "보통";
+                case "D":
+                    return "높음";
+                case "E":
+                    return "매우 높음";
+                default:
+                    return "-";
+            }
+        }
+
+        /// <summary>
         /// 등급 색상을 흰색 쪽으로 boost만큼 밝게 보정한 색상을 반환한다 (호버/선택 강조용).
         /// 등급 색상은 alpha가 이미 1(완전 불투명)이라 alpha를 더 올리는 방식으로는
         /// 시각적 차이가 생기지 않으므로, 밝기를 올려 원래 색과 구분되도록 한다.

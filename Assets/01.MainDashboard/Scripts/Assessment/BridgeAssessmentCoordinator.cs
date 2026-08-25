@@ -26,6 +26,7 @@ namespace BridgeSenseDT.Assessment
         public Texture2D Thumbnail;               // ResultObjectImage 용 (분석 대상 이미지)
         public BridgeChecklistItem ChecklistItem; // 해석된 체크리스트 항목
         public bool ChecklistItemResolved;        // 촬영부재 문자열을 해석하지 못했으면 false
+        public int ComponentIndex;                // 사용자가 입력한 부재 번호(교각7 → 7). 번호를 적지 않았으면 0
         public char StateGrade;                   // 'a'~'e'
         public string DisplayGrade;               // ResultLevel 용 ("A"~"E")
         public float Confidence;                  // ResultConfidence 용 (0~1, 등급을 결정한 결함의 신뢰도)
@@ -66,7 +67,10 @@ namespace BridgeSenseDT.Assessment
             foreach (var input in inputs)
             {
                 var defects = input.Defects ?? new List<DetectedDefect>();
-                bool resolved = SafetyGradeEvaluator.TryParseChecklistItem(input.CapturedPart, out var item);
+
+                // 부재 번호까지 함께 해석한다. 번호는 등급 산정에는 쓰이지 않고
+                // 3D 뷰어에서 해당 번호의 부재로 카메라를 옮길 때 사용한다.
+                bool resolved = SafetyGradeEvaluator.TryParseCapturedPart(input.CapturedPart, out var item, out int componentIndex);
 
                 // 이미지 단위 평가 (AnalyzeResultObject 표시용)
                 // 해석 실패 시에도 화면에는 결과를 보여줘야 하므로, 등급 산정에는 항목 종류가
@@ -91,6 +95,7 @@ namespace BridgeSenseDT.Assessment
                     Thumbnail = input.Thumbnail,
                     ChecklistItem = item,
                     ChecklistItemResolved = resolved,
+                    ComponentIndex = componentIndex,
                     StateGrade = evaluation.stateGrade,
                     DisplayGrade = StateGradeToDisplayGrade(evaluation.stateGrade),
                     Confidence = gradeDriver?.confidence ?? 0f,
@@ -133,7 +138,7 @@ namespace BridgeSenseDT.Assessment
         /// </summary>
         static string BuildDefectSummary(DetectedDefect gradeDriver, int totalCount)
         {
-            if (gradeDriver == null) return "검출된 결함 없음";
+            if (gradeDriver == null) return "미검출";
 
             string name = SafetyGradeEvaluator.GetDefectName(gradeDriver.type);
             return totalCount > 1 ? $"{name} 외 {totalCount - 1}건" : name;

@@ -28,6 +28,16 @@ namespace BridgeSenseDT.Session
         public string CurrentFilePath { get; private set; } // 아직 한 번도 저장하지 않았으면 null
         public BridgeAssessmentReport LastReport { get; private set; } // 3D 등급 시각화 등 후속 단계에서 참조
 
+        /// <summary>
+        /// 등급 산정 결과가 새로 만들어졌을 때 발생한다.
+        /// 3D 뷰어의 손상 목록·등급 색상은 InputAndAnalyzePanel과 다른 패널에 있어
+        /// 매니저가 직접 참조를 들고 호출하기보다 이 이벤트를 구독하는 편이 결합이 덜하다.
+        ///
+        /// 구독하는 쪽이 비활성 상태일 때 발생한 결과는 놓치므로,
+        /// 구독과 별개로 활성화 시점에 LastReport를 직접 읽어 한 번 반영해야 한다.
+        /// </summary>
+        public event System.Action<BridgeAssessmentReport> ReportChanged;
+
         public bool HasSaveTarget => !string.IsNullOrEmpty(CurrentFilePath);
 
         public string CurrentFileName =>
@@ -199,6 +209,7 @@ namespace BridgeSenseDT.Session
         {
             LastReport = BridgeAssessmentCoordinator.Assess(BuildInputsFromSession());
             resultListView.Render(LastReport);
+            ReportChanged?.Invoke(LastReport); // 3D 뷰어 쪽 손상 목록·등급 색상 갱신
         }
 
         /// <summary>

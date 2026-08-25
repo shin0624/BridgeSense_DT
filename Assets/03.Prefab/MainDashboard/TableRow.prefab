@@ -86,7 +86,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: B
+  m_text: Grade
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9d3e2e5d01267ee47bb102e9277cfc56, type: 2}
   m_sharedMaterial: {fileID: -316637795471795230, guid: 9d3e2e5d01267ee47bb102e9277cfc56, type: 2}
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -242.51524, y: 0, z: 0, w: 0}
+  m_margin: {x: -181.48418, y: 0, z: 80.97197, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -171,6 +171,7 @@ GameObject:
   - component: {fileID: 5609860316198795115}
   - component: {fileID: 5647279318414565268}
   - component: {fileID: 366301485043408676}
+  - component: {fileID: 7571373680956734850}
   m_Layer: 0
   m_Name: TableRow
   m_TagString: Untagged
@@ -200,7 +201,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 46.4}
+  m_SizeDelta: {x: 2224.4, y: 46.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8035380235018505847
 CanvasRenderer:
@@ -258,7 +259,7 @@ MonoBehaviour:
     m_Top: 4
     m_Bottom: 4
   m_ChildAlignment: 0
-  m_Spacing: 4
+  m_Spacing: 80
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -286,6 +287,27 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: 0
   m_LayoutPriority: 1
+--- !u!114 &7571373680956734850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2933363834053699241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c57d5ece0b49a7643855acd03644ad2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idText: {fileID: 4255980935699961908}
+  locationText: {fileID: 5039744736537190476}
+  defectText: {fileID: 3067525994913153507}
+  gradeText: {fileID: 5988792153169651170}
+  severityText: {fileID: 6046596266461662654}
+  background: {fileID: 5609860316198795115}
+  normalColor: {r: 0.11, g: 0.09, b: 0.071, a: 1}
+  selectedColor: {r: 1, g: 0.549, b: 0.239, a: 0.55}
+  colorGradeText: 1
 --- !u!1 &3282240441032169449
 GameObject:
   m_ObjectHideFlags: 0
@@ -372,7 +394,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBBF8\uC138\uADE0\uC5F4"
+  m_text: Crack
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9d3e2e5d01267ee47bb102e9277cfc56, type: 2}
   m_sharedMaterial: {fileID: -316637795471795230, guid: 9d3e2e5d01267ee47bb102e9277cfc56, type: 2}
@@ -438,7 +460,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -138.53363, y: 0, z: 264.5812, w: 0}
+  m_margin: {x: -178.16833, y: 0, z: 118.64545, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -530,7 +552,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uAD50\uAC017"
+  m_text: Part
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9d3e2e5d01267ee47bb102e9277cfc56, type: 2}
   m_sharedMaterial: {fileID: -316637795471795230, guid: 9d3e2e5d01267ee47bb102e9277cfc56, type: 2}
@@ -596,7 +618,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 30.301865, y: 0, z: 201.9092, w: 0}
+  m_margin: {x: -81.27748, y: 0, z: 86.14575, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -688,7 +710,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: ID
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9d3e2e5d01267ee47bb102e9277cfc56, type: 2}
   m_sharedMaterial: {fileID: -316637795471795230, guid: 9d3e2e5d01267ee47bb102e9277cfc56, type: 2}
@@ -846,7 +868,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB0AE\uC74C"
+  m_text: Level
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9d3e2e5d01267ee47bb102e9277cfc56, type: 2}
   m_sharedMaterial: {fileID: -316637795471795230, guid: 9d3e2e5d01267ee47bb102e9277cfc56, type: 2}
@@ -912,7 +934,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -25.083694, y: 0, z: 48.602173, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
