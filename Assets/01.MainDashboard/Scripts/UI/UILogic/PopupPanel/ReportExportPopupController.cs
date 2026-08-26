@@ -121,6 +121,7 @@ namespace BridgeSenseDT.UI
             Debug.Log($"{formatName}를 저장했습니다: {path}");
             Report($"{formatName}를 저장했습니다.\n{Path.GetFileName(path)}", isError: false);
 
+            OpenInSystemViewer(path);
             Close();
         }
 
@@ -132,6 +133,32 @@ namespace BridgeSenseDT.UI
                 : "분석";
 
             return $"{bridgeName}_안전분석리포트_{DateTime.Now:yyyyMMdd}";
+        }
+
+        /// <summary>
+        /// 파일을 OS 기본 연결 프로그램으로 연다.
+        ///
+        /// HTML은 기본 브라우저로, CSV는 보통 Excel로 열린다.
+        /// Application.OpenURL이 아니라 Process.Start를 쓰는 이유는,
+        /// OpenURL은 file:// 스킴을 브라우저가 아닌 OS 핸들러로 넘기는 동작이 플랫폼마다 달라
+        /// Windows 빌드에서 항상 보장되지 않기 때문이다. UseShellExecute로 띄우면
+        /// 탐색기가 그 확장자에 등록해 둔 프로그램을 그대로 연다.
+        /// </summary>
+        private void OpenInSystemViewer(string path)
+        {
+            try
+            {
+                var startInfo = new System.Diagnostics.ProcessStartInfo(path)
+                {
+                    UseShellExecute = true,
+                };
+                System.Diagnostics.Process.Start(startInfo);
+            }
+            catch (Exception e)
+            {
+                // 여는 데 실패해도 저장 자체는 끝났으므로 오류로 취급하지 않고 로그만 남긴다.
+                Debug.LogWarning($"저장한 파일을 자동으로 열지 못했습니다: {e.Message}\n경로: {path}");
+            }
         }
 
         private void Report(string message, bool isError)

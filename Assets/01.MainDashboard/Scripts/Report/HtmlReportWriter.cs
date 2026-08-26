@@ -106,11 +106,11 @@ namespace BridgeSenseDT.Report
 
             sb.Append("<section><h2>1. 대상 시설물 정보</h2><table><tbody>");
             AppendInfoRow(sb, "시설명", f.Name, "소재지", f.Location);
-            AppendInfoRow(sb, "노선", f.Route, "준공년도", f.CompletionYear);
-            AppendInfoRow(sb, "상부구조", f.Superstructure, "하부구조", f.Substructure);
-            AppendInfoRow(sb, "연장(m)", f.Length, "폭원(m)", f.Width);
-            AppendInfoRow(sb, "경간수", f.SpanCount, "최대경간장(m)", f.MaxSpan);
-            AppendInfoRow(sb, "설계하중", f.DesignLoad, "관리주체", f.Agency);
+            AppendInfoRow(sb, "준공년도", f.CompletionYear, "상부구조", f.Superstructure);
+            AppendInfoRow(sb, "하부구조", f.Substructure, "연장(m)", f.Length);
+            AppendInfoRow(sb, "폭원(m)", f.Width, "경간수", f.SpanCount);
+            AppendInfoRow(sb, "최대경간장(m)", f.MaxSpan, "설계하중", f.DesignLoad);
+            AppendSingleInfoRow(sb, "관리주체", f.Agency);
             sb.Append("</tbody></table></section>");
         }
 
@@ -119,6 +119,14 @@ namespace BridgeSenseDT.Report
             sb.Append("<tr>");
             sb.Append($"<th style=\"width:14%\">{E(k1)}</th><td style=\"width:36%\">{Dash(v1)}</td>");
             sb.Append($"<th style=\"width:14%\">{E(k2)}</th><td>{Dash(v2)}</td>");
+            sb.Append("</tr>");
+        }
+
+        /// <summary>항목 수가 홀수라 짝을 못 맞춘 마지막 행. 빈 칸으로 나머지를 채우지 않고 하나만 넓게 쓴다.</summary>
+        private static void AppendSingleInfoRow(StringBuilder sb, string key, string value)
+        {
+            sb.Append("<tr>");
+            sb.Append($"<th style=\"width:14%\">{E(key)}</th><td colspan=\"3\">{Dash(value)}</td>");
             sb.Append("</tr>");
         }
 

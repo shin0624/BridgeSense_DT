@@ -66,19 +66,32 @@ namespace BridgeSenseDT.Report
             return sb.ToString();
         }
 
-        /// <summary>등급 비율을 도넛으로 그린다.</summary>
+        /// <summary>
+        /// 등급 비율을 도넛으로 그린다.
+        ///
+        /// viewBox를 size 그대로 두면 라벨이 원 바깥(반지름의 1.18배)까지 뻗어 나갈 때
+        /// 그림 경계를 넘어가 잘린다. 라벨이 차지할 여백만큼 viewBox를 실제로 넓혀서
+        /// 원과 중심은 그대로 두고 여백만 그림 영역에 포함시킨다.
+        /// </summary>
         public static string BuildDonutChart(List<GradeDistributionRow> rows, int size = 260, float holeRatio = 0.55f)
         {
-            float center = size / 2f;
-            float radius = size / 2f - 34f; // 바깥에 비율 글자를 놓을 자리를 남긴다
+            // 라벨은 가운데 정렬이라 "E 3.8%" 같은 문자열의 절반 폭만큼 계산 지점 밖으로 더 나간다.
+            // 그만큼까지 넉넉히 포함해야 좌우 조각의 라벨이 잘리지 않는다.
+            const float labelMargin = 46f;
+
+            float radius = size / 2f - 34f; // 라벨을 놓을 자리를 남긴 원 반지름
             float holeRadius = radius * holeRatio;
+
+            float canvasSize = size + labelMargin * 2f;
+            float center = canvasSize / 2f;
 
             int total = 0;
             foreach (var row in rows)
                 total += row.Count;
 
             var sb = new StringBuilder();
-            sb.Append($"<svg viewBox=\"0 0 {size} {size}\" width=\"100%\" xmlns=\"http://www.w3.org/2000/svg\">");
+            sb.Append($"<svg viewBox=\"0 0 {Num(canvasSize)} {Num(canvasSize)}\" width=\"100%\" " +
+                      "xmlns=\"http://www.w3.org/2000/svg\">");
 
             if (total == 0)
             {
