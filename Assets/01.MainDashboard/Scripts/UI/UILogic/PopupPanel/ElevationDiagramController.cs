@@ -32,25 +32,8 @@ namespace BridgeSenseDT.UI
         [Tooltip("3D 모델에서 경간 길이를 재지 못했을 때 사용할 기본값(m)")]
         [SerializeField] private float defaultSpanLengthMeters = 30f;
 
-        /// <summary>입면도에서 경간(상부)으로 묶이는 부재.</summary>
-        private static readonly BridgeChecklistItem[] DeckItems =
-        {
-            BridgeChecklistItem.Girder,
-            BridgeChecklistItem.Slab,
-            BridgeChecklistItem.Parapet,
-            BridgeChecklistItem.Pavement,
-            BridgeChecklistItem.ExpansionJoint,
-            BridgeChecklistItem.CrossBeam,
-            BridgeChecklistItem.Drainage,
-        };
-
-        /// <summary>입면도에서 교각(하부)으로 묶이는 부재.</summary>
-        private static readonly BridgeChecklistItem[] SubstructureItems =
-        {
-            BridgeChecklistItem.PierAbutment,
-            BridgeChecklistItem.Bearing,
-            BridgeChecklistItem.Foundation,
-        };
+        // 부재 분류와 등급 산출 규칙은 BridgeComponentGradeResolver가 갖는다.
+        // 등급 분포 팝업과 같은 규칙을 써야 두 화면이 다른 숫자를 말하지 않는다.
 
         private const string SpanIdPrefix = "GirderSpan_";
         private const string PierIdPrefix = "Pier_";
@@ -88,33 +71,30 @@ namespace BridgeSenseDT.UI
                 return;
             }
 
-            var spanIndices = CollectIndices(modelRegistry, DeckItems);
-            var pierIndices = CollectIndices(modelRegistry, SubstructureItems);
-
-            var spanGrades = ResolveGrades(report, DeckItems, spanIndices);
-            var pierGrades = ResolveGrades(report, SubstructureItems, pierIndices);
+            // 등급 산출은 등급 분포 팝업과 공유한다. 두 화면이 다른 숫자를 말하지 않게 하기 위해서다.
+            var gradeMap = BridgeComponentGradeResolver.Resolve(report, modelRegistry);
 
             int longAxis = modelRegistry.GetLongitudinalAxis();
 
-            var spans = new List<ElevationSpanData>(spanIndices.Count);
-            foreach (int index in spanIndices)
+            var spans = new List<ElevationSpanData>(gradeMap.SpanIndices.Count);
+            foreach (int index in gradeMap.SpanIndices)
             {
                 spans.Add(new ElevationSpanData
                 {
                     id = SpanIdPrefix + index,
                     lengthMeters = MeasureSpanLength(modelRegistry, index, longAxis),
-                    grade = spanGrades.TryGetValue(index, out string grade) ? grade : string.Empty,
+                    grade = gradeMap.SpanGrades.TryGetValue(index, out string grade) ? grade : string.Empty,
                 });
             }
 
-            var piers = new List<ElevationPierData>(pierIndices.Count);
-            foreach (int index in pierIndices)
+            var piers = new List<ElevationPierData>(gradeMap.PierIndices.Count);
+            foreach (int index in gradeMap.PierIndices)
             {
                 piers.Add(new ElevationPierData
                 {
                     id = PierIdPrefix + index,
                     label = "P" + index,
-                    grade = pierGrades.TryGetValue(index, out string grade) ? grade : string.Empty,
+                    grade = gradeMap.PierGrades.TryGetValue(index, out string grade) ? grade : string.Empty,
                 });
             }
 
@@ -126,71 +106,6 @@ namespace BridgeSenseDT.UI
 
             if (bridgeInfoView != null)
                 bridgeInfoView.Refresh();
-        }
-
-        private static List<int> CollectIndices(BridgeModelRegistry modelRegistry, BridgeChecklistItem[] items)
-        {
-            var unique = new SortedSet<int>();
-
-            foreach (var item in items)
-                modelRegistry.CollectComponentIndices(item, unique);
-
-            return new List<int>(unique);
-        }
-
-        /// <summary>
-        /// 경간·교각별 등급을 정한다.
-        ///
-        /// 번호가 붙은 판정이 번호 없는 판정보다 우선한다. 구체적인 지목이 일괄 판정을 이긴다.
-        /// 같은 우선순위 안에서 여러 판정이 겹치면 더 나쁜 등급을 택한다.
-        /// 한 경간에 거더는 양호하고 난간은 불량이라면 그 경간은 불량으로 보는 것이 안전 판단에 맞다.
-        /// </summary>
-        private static Dictionary<int, string> ResolveGrades(
-            BridgeAssessmentReport report, BridgeChecklistItem[] items, List<int> indices)
-        {
-            var result = new Dictionary<int, string>();
-            if (report?.PerImage == null)
-                return result;
-
-            var numbered = new Dictionary<int, string>(); // 번호가 붙은 판정
-            string general = null;                        // 번호 없는 판정들 중 가장 나쁜 것
-
-            foreach (var image in report.PerImage)
-            {
-                if (!image.ChecklistItemResolved || Array.IndexOf(items, image.ChecklistItem) < 0)
-                    continue;
-
-                if (image.ComponentIndex > 0)
-                {
-                    numbered[image.ComponentIndex] = Worse(
-                        numbered.TryGetValue(image.ComponentIndex, out string existing) ? existing : null,
-                        image.DisplayGrade);
-                }
-                else
-                {
-                    general = Worse(general, image.DisplayGrade);
-                }
-            }
-
-            foreach (int index in indices)
-            {
-                if (numbered.TryGetValue(index, out string grade))
-                    result[index] = grade;
-                else if (general != null)
-                    result[index] = general;
-                // 어느 쪽도 없으면 넣지 않는다. 입면도가 미평가(회색)로 그린다.
-            }
-
-            return result;
-        }
-
-        /// <summary>두 등급 중 더 나쁜 쪽을 돌려준다.</summary>
-        private static string Worse(string a, string b)
-        {
-            if (string.IsNullOrEmpty(a)) return b;
-            if (string.IsNullOrEmpty(b)) return a;
-
-            return SafetyGradeEvaluator.GradeToRank(b) < SafetyGradeEvaluator.GradeToRank(a) ? b : a;
         }
 
         /// <summary>3D 모델에서 해당 경간의 실제 길이를 잰다. 재지 못하면 기본값을 쓴다.</summary>
@@ -235,7 +150,7 @@ namespace BridgeSenseDT.UI
             if (segmentId.StartsWith(SpanIdPrefix, StringComparison.Ordinal)
                 && int.TryParse(segmentId.Substring(SpanIdPrefix.Length), out index))
             {
-                category = DeckItems;
+                category = BridgeComponentGradeResolver.DeckItems;
                 focusItem = BridgeChecklistItem.Girder; // 경간을 대표하는 부재로 카메라를 맞춘다
                 return true;
             }
@@ -243,7 +158,7 @@ namespace BridgeSenseDT.UI
             if (segmentId.StartsWith(PierIdPrefix, StringComparison.Ordinal)
                 && int.TryParse(segmentId.Substring(PierIdPrefix.Length), out index))
             {
-                category = SubstructureItems;
+                category = BridgeComponentGradeResolver.SubstructureItems;
                 focusItem = BridgeChecklistItem.PierAbutment;
                 return true;
             }
@@ -299,7 +214,7 @@ namespace BridgeSenseDT.UI
 
         private static string BuildPartLabel(BridgeChecklistItem[] category, int index)
         {
-            return category == SubstructureItems ? $"교각 {index}" : $"{index}경간";
+            return category == BridgeComponentGradeResolver.SubstructureItems ? $"교각 {index}" : $"{index}경간";
         }
     }
 }

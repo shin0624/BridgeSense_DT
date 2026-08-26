@@ -6,6 +6,7 @@ public class PopupPanelController : MonoBehaviour
     [SerializeField] private GameObject securityLevelPopup;// 부재별 안전등급 입면도 팝업
     [SerializeField] private GameObject elementLevelPopup;// 부재등급분포 팝업
     [SerializeField] private GameObject inferenceCheckPopup; // 추론 여부 체크 팝업
+    [SerializeField] private GameObject reportExportPopup;   // 보고서 포맷 선택 팝업
     [SerializeField] private GameObject sideToolbar;
     [SerializeField] private Button securityLevelButton;
     [SerializeField] private Button elementLevelButton;
@@ -29,6 +30,7 @@ public class PopupPanelController : MonoBehaviour
         inferenceStartButton.onClick.AddListener(OpenInferenceCheckPopup);
         inferenceCheckCloseButton.onClick.AddListener(CloseInferenceCheckPopup);
         infernceCheckNoButton.onClick.AddListener(CloseInferenceCheckPopup);
+        reportButton.onClick.AddListener(OpenReportExportPopup);
 
     }
     // 사이드 툴바는 모달이 아니므로 팝업 관리 대상에서 제외하고 직접 켠다.
@@ -61,6 +63,12 @@ public class PopupPanelController : MonoBehaviour
         MainDashboardManager.Instance.OpenPopupPanel(inferenceCheckPopup);// 추론 여부 체크 팝업을 활성화
     }
 
+    // 보고서 포맷 선택 팝업. 닫기는 팝업 자신(ReportExportPopupController)이 처리한다.
+    private void OpenReportExportPopup()
+    {
+        MainDashboardManager.Instance.OpenPopupPanel(reportExportPopup);
+    }
+
     private void CloseSecurityLevelPopup()
     {
         MainDashboardManager.Instance.ClosePopupPanel(securityLevelPopup);// 부재별 안전등급 입면도 팝업을 비활성화
@@ -86,6 +94,7 @@ public class PopupPanelController : MonoBehaviour
         inferenceStartButton.onClick.RemoveListener(OpenInferenceCheckPopup);
         inferenceCheckCloseButton.onClick.RemoveListener(CloseInferenceCheckPopup);
         infernceCheckNoButton.onClick.RemoveListener(CloseInferenceCheckPopup);
+        reportButton.onClick.RemoveListener(OpenReportExportPopup);
 
     }
 }
