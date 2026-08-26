@@ -102,6 +102,42 @@ namespace BridgeSenseDT.Bridge3D
         }
 
         /// <summary>
+        /// 해당 부재 종류에 존재하는 부재 번호들을 오름차순으로 모은다.
+        ///
+        /// 입면도가 경간·교각을 몇 칸 그릴지 정할 때 쓴다.
+        /// 현황조서의 경간수를 쓰지 않고 3D 모델에서 세는 이유는,
+        /// 그래야 입면도와 3D 뷰어가 항상 같은 구성을 보여주기 때문이다.
+        /// </summary>
+        public void CollectComponentIndices(BridgeChecklistItem item, SortedSet<int> results)
+        {
+            foreach (var tag in tags)
+            {
+                if (tag == null || !tag.Contains(item))
+                    continue;
+
+                if (tag.ComponentIndex > 0)
+                    results.Add(tag.ComponentIndex);
+            }
+        }
+
+        /// <summary>
+        /// 교량이 가장 길게 뻗은 축을 돌려준다(0=x, 1=y, 2=z).
+        /// 입면도에서 경간 길이를 실제 비율대로 그릴 때 이 축을 기준으로 잰다.
+        /// </summary>
+        public int GetLongitudinalAxis()
+        {
+            if (!TryGetWholeBounds(out Bounds bounds))
+                return 0;
+
+            Vector3 size = bounds.size;
+
+            if (size.x >= size.y && size.x >= size.z)
+                return 0;
+
+            return size.z >= size.y ? 2 : 1;
+        }
+
+        /// <summary>
         /// 번호가 지정된 부재 하나의 경계를 구한다(교각7 → 7번 교각).
         /// 해당 번호의 부재가 없으면 false를 돌려주고, 호출하는 쪽이 대표 부재로 넘어가게 한다.
         /// </summary>

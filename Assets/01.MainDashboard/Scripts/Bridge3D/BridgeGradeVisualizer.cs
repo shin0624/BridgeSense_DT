@@ -41,15 +41,21 @@ namespace BridgeSenseDT.Bridge3D
 
         private BridgeModelRegistry Registry => registry != null ? registry : BridgeModelRegistry.Instance;
 
+        private bool subscribed;
+
+        // OnEnable과 Start 양쪽에서 구독을 시도한다.
+        // Unity는 오브젝트마다 Awake와 OnEnable을 이어서 호출하므로,
+        // 항상 켜져 있는 교량 모델에 붙은 이 컴포넌트는 AnalysisSessionManager.Awake보다
+        // 먼저 실행될 수 있다. 그때 그냥 넘어가면 영영 구독하지 못한 채로 남는다.
+        // Start는 모든 Awake가 끝난 뒤에 실행되므로 늦어도 여기서는 매니저가 준비돼 있다.
         private void OnEnable()
         {
-            if (AnalysisSessionManager.Instance == null)
-                return;
+            TrySubscribe();
+        }
 
-            AnalysisSessionManager.Instance.ReportChanged += Apply;
-
-            // 이 패널이 꺼져 있는 동안 분석이 끝났을 수 있으므로 현재 결과를 한 번 반영한다.
-            Apply(AnalysisSessionManager.Instance.LastReport);
+        private void Start()
+        {
+            TrySubscribe();
         }
 
         private void OnDisable()
@@ -57,7 +63,24 @@ namespace BridgeSenseDT.Bridge3D
             if (AnalysisSessionManager.Instance != null)
                 AnalysisSessionManager.Instance.ReportChanged -= Apply;
 
+            subscribed = false;
             StopPulse();
+        }
+
+        private void TrySubscribe()
+        {
+            if (subscribed)
+                return;
+
+            var manager = AnalysisSessionManager.Instance;
+            if (manager == null)
+                return;
+
+            manager.ReportChanged += Apply;
+            subscribed = true;
+
+            // 구독 이전에 분석이 끝났을 수 있으므로 현재 결과를 한 번 반영한다.
+            Apply(manager.LastReport);
         }
 
         private void OnDestroy()

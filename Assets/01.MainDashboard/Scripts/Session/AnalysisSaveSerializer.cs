@@ -173,14 +173,30 @@ namespace BridgeSenseDT.Session
 
             foreach (var defect in entry.Defects)
             {
-                dto.defects.Add(new DefectDto
+                var defectDto = new DefectDto
                 {
                     defectType = defect.type.ToString(),
                     confidence = defect.confidence,
                     maskAreaRatio = defect.maskAreaRatio,
                     estimatedWidthMm = defect.estimatedWidthMm,
                     isStructurallyCritical = defect.isStructurallyCritical,
-                });
+                };
+
+                if (defect.boxes != null)
+                {
+                    foreach (var box in defect.boxes)
+                    {
+                        defectDto.boxes.Add(new DefectBoxDto
+                        {
+                            x1 = box.xMin,
+                            y1 = box.yMin,
+                            x2 = box.xMax,
+                            y2 = box.yMax,
+                        });
+                    }
+                }
+
+                dto.defects.Add(defectDto);
             }
 
             return dto;
@@ -225,14 +241,32 @@ namespace BridgeSenseDT.Session
                         continue;
                     }
 
-                    entry.Defects.Add(new DetectedDefect
+                    var defect = new DetectedDefect
                     {
                         type = defectType,
                         confidence = defectDto.confidence,
                         maskAreaRatio = defectDto.maskAreaRatio,
                         estimatedWidthMm = defectDto.estimatedWidthMm,
                         isStructurallyCritical = defectDto.isStructurallyCritical,
-                    });
+                    };
+
+                    // 사각형이 없는 저장본은 이 기능이 생기기 전에 만들어진 것이다.
+                    // 나머지 값은 그대로 쓸 수 있으므로 사각형만 비운 채로 복원한다.
+                    if (defectDto.boxes != null)
+                    {
+                        foreach (var boxDto in defectDto.boxes)
+                        {
+                            defect.boxes.Add(new DefectBox
+                            {
+                                xMin = boxDto.x1,
+                                yMin = boxDto.y1,
+                                xMax = boxDto.x2,
+                                yMax = boxDto.y2,
+                            });
+                        }
+                    }
+
+                    entry.Defects.Add(defect);
                 }
             }
 

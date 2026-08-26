@@ -1,0 +1,41 @@
+{
+    "asset": "decddc86a6bba3341a5704c38d055dd0",
+    "fileName": "01a02d53-ed16-7a80-9de0-e94d35b5dbd8.png",
+    "prompt": "A clean UI card panel frame for a bridge structural-health digital twin dashboard. Rounded corners, flat vector design. Soft cream / off-white (#F5E6DC) panel fill with a crisp rust-orange (#AE511B) outline border, subtle inner drop shadow. Empty center, no text, no icons. Centered panel occupying most of the frame, fully transparent background outside the rounded rectangle. Suitable for 9-slice scaling. Modern industrial dashboard aesthetic matching the provided reference image style.",
+    "negativePrompt": "",
+    "model": "flux-2-dev",
+    "modelName": "Flux 2 (Dev)",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "88feb6aecb298bf49ba597d7d555e545",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0,
+    "dynamicParams": {
+        "serializedData": []
+    }
+}

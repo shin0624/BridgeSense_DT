@@ -21,6 +21,15 @@ namespace BridgeSenseDT.BridgeData
         public string sub;    // 하부구조
         public string year;   // 준공년도
 
+        public string len;    // 총길이(m) - 입면도의 총 교장
+        public string spans;  // 경간수
+        public string maxSpan;// 최대경간장(m)
+
+        public string route;      // 노선명
+        public string designLoad; // 설계하중
+        public string width;      // 총폭(m)
+        public string usableWidth;// 유효폭(m)
+
         /// <summary>시도부터 리까지를 이어붙인 주소. 비어있는 단계는 건너뛴다.</summary>
         public string GetAddress()
         {

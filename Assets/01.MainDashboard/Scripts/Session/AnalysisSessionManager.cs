@@ -41,7 +41,7 @@ namespace BridgeSenseDT.Session
         public bool HasSaveTarget => !string.IsNullOrEmpty(CurrentFilePath);
 
         public string CurrentFileName =>
-            HasSaveTarget ? Path.GetFileNameWithoutExtension(CurrentFilePath) : "(저장되지 않음)";
+            HasSaveTarget ? Path.GetFileNameWithoutExtension(CurrentFilePath) : "분석 상태가 변경될 경우 안내문구가 표시됩니다.";
 
         private void Awake()
         {

@@ -38,6 +38,10 @@ namespace BridgeSenseDT.Assessment
             float[] maxScorePerClass = GetMaxScorePerClass(analysis.Detections);
             float[] areaRatioPerClass = GetAreaRatioPerClass(analysis.Segmentation);
 
+            // 마스크는 저장하지 않으므로, 결함 위치를 나중에도 보여줄 수 있도록
+            // 지금 사각형으로 뽑아 결함과 함께 남긴다.
+            List<DefectBox>[] boxesPerClass = MaskBoxExtractor.ExtractAll(analysis.Segmentation);
+
             for (int classId = 0; classId < NumDefectClasses; classId++)
             {
                 float rtdetrScore = maxScorePerClass[classId];
@@ -63,6 +67,7 @@ namespace BridgeSenseDT.Assessment
                     maskAreaRatio = areaRatio,
                     estimatedWidthMm = -1f, // 촬영거리·GSD 정보가 없어 균열폭 실측 불가 (model_io_spec.md 참고)
                     isStructurallyCritical = SafetyGradeEvaluator.IsStructurallyCriticalType(type),
+                    boxes = boxesPerClass[classId],
                 });
             }
 

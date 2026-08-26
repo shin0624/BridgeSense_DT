@@ -1,0 +1,41 @@
+{
+    "asset": "4d1fb634e9266af4baf70af222c739d9",
+    "fileName": "01a0395c-205d-765e-9f66-f508377e6e3f.png",
+    "prompt": "A vertical sidebar panel UI background sprite matching the dark theme, clean sci-fi digital dashboard aesthetic, soft glow / subtle border, and color scheme of the reference image. Vertical UI panel frame for a dashboard sidebar.",
+    "negativePrompt": "",
+    "model": "gpt-image-1-5",
+    "modelName": "GPT Image 1.5",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "7e75b9485f5bf064eade709999d44b03",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0,
+    "dynamicParams": {
+        "serializedData": []
+    }
+}

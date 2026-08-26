@@ -68,6 +68,10 @@ namespace BridgeSenseDT.Assessment
         public float maskAreaRatio;          // SegFormer 마스크 면적률 (0~1)
         public float estimatedWidthMm = -1f; // 스케일 정보 있을 때만. -1이면 미상
         public bool isStructurallyCritical;  // 단면손실 직결 결함(철근노출·강재부식) 여부
+
+        // 결함이 사진의 어디에 있는지 가리키는 사각형들(정규화 좌표).
+        // SegFormer 마스크에서 뽑아내며, 마스크 자체는 저장하지 않고 이 사각형만 남긴다.
+        public List<DefectBox> boxes = new List<DefectBox>();
     }
 
     /// <summary>체크리스트 항목 1개의 평가 결과.</summary>
@@ -353,7 +357,11 @@ namespace BridgeSenseDT.Assessment
             return "E";
         }
 
-        static int GradeToRank(string grade)
+        /// <summary>
+        /// 등급을 크기 비교가 가능한 값으로 바꾼다. A가 가장 크고 E가 가장 작다.
+        /// 한 부재에 여러 판정이 겹칠 때 더 나쁜 쪽을 고르는 데 쓴다.
+        /// </summary>
+        public static int GradeToRank(string grade)
         {
             switch (grade) { case "A": return 5; case "B": return 4; case "C": return 3; case "D": return 2; default: return 1; }
         }
