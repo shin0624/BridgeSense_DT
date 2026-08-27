@@ -54,12 +54,18 @@ Base architectures fine-tuned for this project:
 
 The fine-tuned weights (`Assets/06.AI/models/rtdetr.onnx`,
 `Assets/06.AI/models/segformer.onnx`) are not included in this repository
-(`.gitignore` excludes `*.onnx`). A built/playable version of the
-application bundling these weights is distributed separately — see the
-download link in [README.md](README.md). To run AI inference from the
-source in this repository, place a compatible `rtdetr.onnx` /
-`segformer.onnx` under `Assets/06.AI/models/` — see
-`ai/export/model_io_spec.md` for the input/output tensor contract.
+(`.gitignore` excludes `*.onnx`) due to file size, but are published on
+Hugging Face:
+
+- https://huggingface.co/shin0624/bridgesense-rtdetr
+- https://huggingface.co/shin0624/bridgesense-segformer
+
+To run AI inference from the source in this repository, download the
+compatible `rtdetr.onnx` / `segformer.onnx` from the links above and place
+them under `Assets/06.AI/models/` — see `ai/export/model_io_spec.md` for the
+input/output tensor contract. A built/playable version of the application
+bundling these weights is also distributed separately — see the download
+link in [README.md](README.md).
 
 ## Test/reference imagery and data
 

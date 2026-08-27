@@ -40,8 +40,15 @@ scripts/                    # 개발 환경 부트스트랩 스크립트
 
 RT-DETR v2(`PekingU/rtdetr_v2_r18vd` 기반)와 SegFormer MiT-B2(`nvidia/mit-b2` 기반)를 AI-Hub 교량 외관점검 데이터로 파인튜닝한 뒤 ONNX로 변환해 사용합니다. 학습 파이프라인 전체(`ai/`)는 이 저장소에 포함되어 있습니다.
 
-- 소스 코드를 직접 빌드해 실행하려면 Unity Engine 6000.0.69f1 환경과, 호환되는 `rtdetr.onnx` / `segformer.onnx`를 직접 준비해 `Assets/06.AI/models/`에 넣어야 합니다. 입출력 텐서 규격은 `ai/export/model_io_spec.md`를 참고하세요.
-- 미리 빌드된 실행 파일(가중치 포함)을 바로 사용하려면 아래 다운로드 링크를 이용하세요.
+파인튜닝된 가중치는 Hugging Face에 공개되어 있습니다.
+
+- RT-DETR v2 (결함 검출): https://huggingface.co/shin0624/bridgesense-rtdetr
+- SegFormer MiT-B2 (결함 분할): https://huggingface.co/shin0624/bridgesense-segformer
+
+용량 문제로 이 저장소에는 `.onnx` 파일을 직접 포함하지 않았습니다(`.gitignore`로 제외).
+소스 코드를 직접 빌드해 실행하려면 Unity Engine 6000.0.69f1 환경에서, 위 링크의
+`rtdetr.onnx` / `segformer.onnx`를 내려받아 `Assets/06.AI/models/`에 넣어야 합니다.
+입출력 텐서 규격은 `ai/export/model_io_spec.md`를 참고하세요.
 
 ## 빌드된 실행 파일 다운로드
 
