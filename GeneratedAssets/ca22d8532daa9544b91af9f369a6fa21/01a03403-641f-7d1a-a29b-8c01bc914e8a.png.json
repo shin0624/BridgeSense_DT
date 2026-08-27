@@ -1,0 +1,41 @@
+{
+    "asset": "ca22d8532daa9544b91af9f369a6fa21",
+    "fileName": "01a03403-641f-7d1a-a29b-8c01bc914e8a.png",
+    "prompt": "A vertical UI panel background with a smooth, elegant gradient designed to sit on top of a dark scene background. The base is deep near-black dark brown (#150f0a to #1a120c) across most of the panel. A very subtle, dim warm amber glow (#4a2f18, faint) originates from the BOTTOM-LEFT corner and fades diagonally toward the center and upper-right, becoming deep near-black. Keep the light intensity low and faint. Very smooth, clean, soft diffused lighting, no text, no icons, no objects, no harsh lines. Darker overall for good readability of overlaid content. Refined, premium dashboard UI aesthetic, matching the color palette of the provided reference image. Subtle vignette at the edges.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "88feb6aecb298bf49ba597d7d555e545",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0,
+    "dynamicParams": {
+        "serializedData": []
+    }
+}

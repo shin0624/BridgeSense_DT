@@ -1,0 +1,41 @@
+{
+    "asset": "ee17a3d5099710844a1e990b42cfe108",
+    "fileName": "01a03401-d152-7fe9-ae98-3a8b81bd9687.png",
+    "prompt": "Adjust this vertical UI panel background gradient: make the warm amber/orange glow much more subtle and dimmer (significantly reduce the light intensity, keeping it very faint). Change the gradient direction so the light originates from the TOP-RIGHT corner and fades diagonally toward the center and lower-left, becoming deep near-black dark brown (#150f0a to #1a120c) across most of the panel. The amber glow (#4a2f18, very dim) should only softly touch the top-right corner. Keep it smooth, clean, premium dashboard aesthetic with no text, no icons, no objects. Darker overall for good readability of overlaid content.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "ee17a3d5099710844a1e990b42cfe108",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0,
+    "dynamicParams": {
+        "serializedData": []
+    }
+}
