@@ -97,6 +97,9 @@ ai/wandb/
 /data/coco_format/
 /data/*.zip
 
+# AI 파이프라인 수동 검증용 샘플 이미지 (용량 문제로 git 커밋 금지)
+/Assets/06.AI/TestImages/
+
 # 기타 임시 파일
 /BridgeSenseDT/
 .env
