@@ -56,6 +56,17 @@ RT-DETR v2(`PekingU/rtdetr_v2_r18vd` 기반)와 SegFormer MiT-B2(`nvidia/mit-b2`
 - C# 12.0 
 - Python 3.10.11 (RT-DETR v2 / SegFormer 파인튜닝, `ai/requirements.txt` 참고)
 
+## 학습 데이터 출처
+
+본 프로젝트의 AI 모델은 아래 데이터셋으로 학습되었습니다.
+
+- 데이터셋: 교량 외관점검 입면정사영상 데이터
+- 출처: AI 허브(https://aihub.or.kr)
+
+AI 허브 이용정책에 따라 원본 데이터는 본 저장소에 포함되어 있지 않으며,
+학습 결과물(가중치)만 공개합니다. 데이터가 필요한 경우 AI 허브에서
+직접 이용 신청하시기 바랍니다.
+
 ## 라이선스
 
 이 저장소에서 직접 작성한 소스 코드(Unity/C# 스크립트, `ai/` 파이썬 코드)는 [MIT License](LICENSE.md)로 배포합니다.
