@@ -3,11 +3,10 @@ RT-DETR v2 파인튜닝 스크립트 (HuggingFace Trainer 기반).
 
 data/coco_format/{train,val}.json + 원본 이미지 디렉터리로 `PekingU/rtdetr_v2_r18vd`를
 9개 결함 클래스로 파인튜닝한다. 전처리(정규화 안 함, 640x640 리사이즈)는 베이스
-체크포인트의 preprocessor_config.json을 그대로 따르며, 자세한 내용은
-ai/export/model_io_spec.md 1절 참고.
+체크포인트의 preprocessor_config.json을 그대로 따른다.
 
 강재(강재_부식, 도장_박리) 클래스 불균형(전체의 0.1%) 대응으로 학습 데이터에서 강재
-포함 이미지를 오버샘플링한다 (ai/docs/AI_PIPELINE_PLAN.md 5.4절). RT-DETR의 손실은
+포함 이미지를 오버샘플링한다. RT-DETR의 손실은
 Hungarian 매칭 기반 sigmoid focal loss라 클래스별 loss 가중치를 직접 넣으려면 모델
 손실 함수 자체를 수정해야 하는 더 큰 작업이 필요해서, 이번 스크립트는 오버샘플링만
 적용한다 — 부족하면 후속 작업으로 검토.

@@ -60,11 +60,10 @@ namespace BridgeSenseDT.Session
     {
         public string defectType;
         public float confidence;
-        public float maskAreaRatio;
         public float estimatedWidthMm;
         public bool isStructurallyCritical;
 
-        // 결함 위치 사각형. SegFormer 마스크에서 뽑은 값이며 마스크 자체는 저장하지 않는다.
+        // 결함 위치 사각형. RT-DETR 검출 박스에서 뽑은 값(0~1 정규화 좌표).
         public List<DefectBoxDto> boxes = new List<DefectBoxDto>();
     }
 

@@ -8,14 +8,14 @@ using UnityEngine;
 
 // RtdetrModel을 학습에 쓰이지 않은 06.AI/TestImages/ 실제 이미지로 돌려서
 // 파이프라인(전처리→추론→디코딩)이 말이 되는 결과를 내는지 확인하는 1회성 검증 도구.
-// eval_map이 0.047~0.056로 낮게 나온 모델이라(ai/CLAUDE.md), "정확히 맞추는가"가 아니라
+// eval_map이 0.047~0.056로 낮게 나온 모델이라, "정확히 맞추는가"가 아니라
 // "정상 이미지보다 결함 이미지에서 관련 클래스 score가 유의미하게 높게 나오는가"를 본다.
 public static class RtdetrImageValidator
 {
     private const string ResultPath =
         @"C:\Users\qjatn\AppData\Local\Temp\claude\c--GitHubClone-BridgeSense-DT\e25cff99-f5e7-4ca4-a9cc-deced9809f31\scratchpad\rtdetr_image_validation_result.txt";
 
-    // 폴더명 -> model_io_spec.md 4절 기준 기대 클래스 id (정상은 결함 클래스가 없으므로 -1)
+    // 폴더명 -> 기대 클래스 id (정상은 결함 클래스가 없으므로 -1)
     private static readonly Dictionary<string, int> FolderToExpectedClassId = new()
     {
         { "Concrete crack", 0 },
@@ -50,7 +50,7 @@ public static class RtdetrImageValidator
                 var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
 
                 var top5 = model.Run(texture, scoreThreshold: 0f, topK: 5); // threshold를 0으로 둬서 필터링 없이 원본 순위 그대로 top5 확인
-                var official = model.Run(texture, scoreThreshold: 0.5f, topK: 100); // model_io_spec.md 권장 기본 threshold(0.5) 기준 실제 검출 수
+                var official = model.Run(texture, scoreThreshold: 0.5f, topK: 100); // 권장 기본 threshold(0.5) 기준 실제 검출 수
 
                 if (official.Count > 0)
                     passCount++;

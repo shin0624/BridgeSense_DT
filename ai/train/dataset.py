@@ -1,15 +1,14 @@
 """
 COCO 포맷(convert_to_coco.py 산출물) 공용 Dataset 로더.
 
-train_rtdetr.py / train_segformer.py에서 공유. 강재(강재_부식, 도장_박리) 클래스가
+train_rtdetr.py가 사용. 강재(강재_부식, 도장_박리) 클래스가
 전체의 0.1%뿐인 불균형 문제 대응으로, 강재 어노테이션을 포함한 이미지를 오버샘플링하는
-옵션을 제공한다 (배경: ai/docs/AI_PIPELINE_PLAN.md 5.4절).
+옵션을 제공한다.
 """
 import random
 import time
 from pathlib import Path
 
-import numpy as np
 from PIL import Image
 from pycocotools.coco import COCO
 from torch.utils.data import Dataset
@@ -42,7 +41,7 @@ def build_balanced_index(coco: COCO, oversample_steel: int = 1, max_per_material
     """다수 클래스(콘크리트/아스팔트/정상데이터) 다운샘플링 + 강재 오버샘플링을 함께 적용해서
     최종 image_id 리스트를 만든다(검출/분할 공용). max_per_material을 지정하면 재질당 최대
     이 장수까지만 남기고 무작위로 줄인다(강재는 원래도 희소해서 절대 줄이지 않음) — 학습
-    스텝 수 자체를 줄여서 시간을 단축하기 위함(ai/docs/AI_PIPELINE_PLAN.md 5.4절 참고)."""
+    스텝 수 자체를 줄여서 시간을 단축하기 위함."""
     image_ids = sorted(coco.imgs.keys())  # 전체 이미지 id를 정렬된 리스트로 확보(순서 고정용)
 
     if max_per_material is not None:  # 다수 클래스 다운샘플링을 쓰는 경우
@@ -136,57 +135,6 @@ class CocoDetectionDataset(Dataset):
         }
 
 
-class CocoSegmentationDataset(Dataset):
-    """SegFormer 학습용 COCO Dataset. segmentation polygon을 픽셀 단위 클래스 마스크로 rasterize한다."""
-
-    def __init__(
-        self,
-        images_dir: str,
-        annotation_json: str,
-        image_processor,
-        oversample_steel: int = 1,
-        max_samples: int | None = None,
-        max_per_material: int | None = None,
-    ):
-        self.images_dir = Path(images_dir)  # 원본 이미지가 들어있는 디렉터리 경로 저장
-        self.coco = COCO(annotation_json)  # COCO json을 읽어서 이미지/어노테이션/카테고리 인덱스를 구성
-        self.image_processor = image_processor  # SegFormer용 HF 이미지 프로세서(리사이즈·정규화·라벨 인코딩 담당)
-        self.image_ids = build_balanced_index(self.coco, oversample_steel, max_per_material)  # 다운샘플링+오버샘플링 반영된 이미지 id 목록
-        if max_samples is not None:  # 스모크 테스트처럼 일부만 쓰고 싶을 때
-            self.image_ids = self.image_ids[:max_samples]  # 앞에서부터 max_samples개만 남기고 잘라냄
-
-    def __len__(self):
-        return len(self.image_ids)  # Dataset 프로토콜: 전체 샘플 수(오버샘플링 반영된 길이) 반환
-
-    def __getitem__(self, idx, _skip_count: int = 0):
-        image_id = self.image_ids[idx]  # idx번째로 순회할 실제 image_id를 조회(중복 있을 수 있음)
-        img_info = self.coco.imgs[image_id]  # 해당 image_id의 메타정보(파일명, 폭/높이 등) 조회
-        path = self.images_dir / img_info["file_name"]  # 실제 이미지 파일 경로
-        try:
-            image = open_image_with_retry(path)  # 이미지 파일을 열어 RGB로 통일(네트워크 볼륨 일시 오류는 재시도)
-        except OSError as e:  # 재시도까지 다 실패 = 파일 자체가 깨졌을 가능성이 높음(일시 오류가 아님)
-            if _skip_count >= 20:  # 연속으로 너무 많이 실패하면 진짜 심각한 문제라 그대로 예외를 올림
-                raise
-            print(f"경고: 이미지 열기 실패, 건너뜀 - {path} ({e})")  # 어떤 파일이 문제인지 기록으로 남김
-            return self.__getitem__((idx + 1) % len(self), _skip_count=_skip_count + 1)  # 학습이 죽지 않도록 다음 샘플로 대체
-
-        height, width = img_info["height"], img_info["width"]  # 원본 이미지 픽셀 크기(마스크 크기와 맞추기 위함)
-        segmentation_map = np.zeros((height, width), dtype=np.uint8)  # 0 = 배경/정상(결함 없음)으로 초기화된 픽셀 마스크
-
-        ann_ids = self.coco.getAnnIds(imgIds=image_id)  # 이 이미지에 달린 어노테이션 id들을 조회
-        for ann in self.coco.loadAnns(ann_ids):  # 어노테이션(결함 폴리곤)을 하나씩 순회하며 마스크에 칠함
-            mask = self.coco.annToMask(ann).astype(bool)  # 폴리곤 좌표를 이미지 크기의 이진 픽셀 마스크로 변환(rasterize)
-            segmentation_map[mask] = ann["category_id"] + 1  # RT-DETR과 클래스 id를 맞추기 위해 +1 shift(0번은 배경 전용)
-
-        encoding = self.image_processor(
-            images=image, segmentation_maps=segmentation_map, return_tensors="pt"
-        )  # 리사이즈·정규화 및 라벨(마스크) 인코딩을 한 번에 수행
-        return {
-            "pixel_values": encoding["pixel_values"][0],  # 배치 차원(0번째)을 제거한 전처리된 이미지 텐서
-            "labels": encoding["labels"][0],  # 배치 차원을 제거한 픽셀별 클래스 id 마스크
-        }
-
-
 def build_collate_fn(image_processor):
     def collate_fn(batch):
         pixel_values = [item["pixel_values"] for item in batch]  # 배치 내 각 샘플의 이미지 텐서를 리스트로 모음
@@ -197,4 +145,4 @@ def build_collate_fn(image_processor):
             result["pixel_mask"] = encoding["pixel_mask"]  # 마스크도 배치 딕셔너리에 포함시킴
         return result  # 최종 collate 결과 반환
 
-    return collate_fn  # image_processor를 캡처한 collate_fn 함수 자체를 반환(RT-DETR의 Trainer data_collator로 사용, SegFormer는 기본 collate로 충분)
+    return collate_fn  # image_processor를 캡처한 collate_fn 함수 자체를 반환(RT-DETR의 Trainer data_collator로 사용)

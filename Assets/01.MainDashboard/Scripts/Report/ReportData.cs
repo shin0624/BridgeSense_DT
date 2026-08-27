@@ -68,7 +68,6 @@ namespace BridgeSenseDT.Report
         public string ChecklistItem;  // 점검 항목명
         public string FacilityArea;   // 시설영역
         public string DefectType;     // 결함 유형
-        public float AreaRatioPercent;
         public float ConfidencePercent;
         public char StateGrade;       // a~e
         public int Score;

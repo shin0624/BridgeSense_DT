@@ -112,10 +112,9 @@ namespace BridgeSenseDT.UI
         /// <summary>
         /// 사진 위에 그릴 사각형을 모은다.
         ///
-        /// RT-DETR 검출이 있으면 그쪽을 쓴다. 객체 검출기라 결함 하나를 하나의 사각형으로 잡아준다.
-        /// 다만 실측에서 RT-DETR은 대부분의 이미지에서 임계값을 넘지 못했으므로,
-        /// 없을 때는 SegFormer 마스크에서 뽑아둔 사각형으로 대신한다.
-        /// 두 출처를 함께 그리면 같은 결함에 사각형이 겹쳐 그려져 오작동처럼 보인다.
+        /// entry.Detections(원본 RT-DETR 검출 결과)가 있으면 그쪽을 우선 쓴다. 없을 때는
+        /// entry.Defects[].boxes(등급 산정용으로 이미 축약해둔 RT-DETR 유래 사각형)로 대신한다 -
+        /// bbox 원본 없이 결함 목록만 갖고 있는 과거 저장 파일 포맷을 위한 폴백이다.
         /// </summary>
         private static List<DefectBox> CollectBoxes(AnalysisEntry entry, int width, int height, out string source)
         {
@@ -139,7 +138,7 @@ namespace BridgeSenseDT.UI
                 return boxes;
             }
 
-            source = "SegFormer 마스크";
+            source = "저장된 결함 목록";
 
             if (entry.Defects != null)
             {

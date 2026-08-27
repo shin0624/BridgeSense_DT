@@ -28,7 +28,7 @@ namespace BridgeSenseDT.Session
         /// 모델을 재학습해 .onnx를 교체하면 이 문자열도 함께 올릴 것.
         /// 그래야 과거 저장본의 등급이 어떤 모델 기준이었는지 나중에 판별할 수 있다.
         /// </summary>
-        public const string CurrentModelVersion = "rtdetr-v2-r18vd@260810 / segformer-mitb2@260810";
+        public const string CurrentModelVersion = "rtdetr-v2-r18vd@260810";
 
         private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
         {
@@ -177,7 +177,6 @@ namespace BridgeSenseDT.Session
                 {
                     defectType = defect.type.ToString(),
                     confidence = defect.confidence,
-                    maskAreaRatio = defect.maskAreaRatio,
                     estimatedWidthMm = defect.estimatedWidthMm,
                     isStructurallyCritical = defect.isStructurallyCritical,
                 };
@@ -245,7 +244,6 @@ namespace BridgeSenseDT.Session
                     {
                         type = defectType,
                         confidence = defectDto.confidence,
-                        maskAreaRatio = defectDto.maskAreaRatio,
                         estimatedWidthMm = defectDto.estimatedWidthMm,
                         isStructurallyCritical = defectDto.isStructurallyCritical,
                     };

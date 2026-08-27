@@ -6,7 +6,7 @@ namespace BridgeSenseDT.Assessment
 {
     /// <summary>
     /// 결함 유형. RT-DETR 클래스 id(0~8)와 정수값이 정확히 일치하도록 선언
-    /// (ai/export/model_io_spec.md 4절 표 기준). SegFormer는 배경이 0번을 차지하므로 여기 값 +1.
+    /// (convert_to_coco.py의 클래스 순서 기준).
     /// </summary>
     public enum DefectType
     {
@@ -60,17 +60,15 @@ namespace BridgeSenseDT.Assessment
         InspectionPath,  // 점검로 등
     }
 
-    /// <summary>RT-DETR + SegFormer 추론 결과를 평가용으로 환산한 결함 1건.</summary>
+    /// <summary>RT-DETR 추론 결과를 평가용으로 환산한 결함 1건.</summary>
     public class DetectedDefect
     {
         public DefectType type;
         public float confidence;             // 검출 신뢰도 (0~1)
-        public float maskAreaRatio;          // SegFormer 마스크 면적률 (0~1)
         public float estimatedWidthMm = -1f; // 스케일 정보 있을 때만. -1이면 미상
         public bool isStructurallyCritical;  // 단면손실 직결 결함(철근노출·강재부식) 여부
 
-        // 결함이 사진의 어디에 있는지 가리키는 사각형들(정규화 좌표).
-        // SegFormer 마스크에서 뽑아내며, 마스크 자체는 저장하지 않고 이 사각형만 남긴다.
+        // 결함이 사진의 어디에 있는지 가리키는 사각형들(정규화 좌표, RT-DETR 검출 박스).
         public List<DefectBox> boxes = new List<DefectBox>();
     }
 
@@ -224,7 +222,8 @@ namespace BridgeSenseDT.Assessment
             // 중대 손상이 있으면 즉시 d 이하로 판정 (매뉴얼 2.2 유의사항)
             if (valid.Any(d => d.isStructurallyCritical))
             {
-                bool severe = valid.Any(d => d.isStructurallyCritical && d.maskAreaRatio > 0.15f);
+                // 면적 정보가 없으므로 검출 신뢰도가 매우 높은 경우를 "뚜렷한 손상"으로 본다.
+                bool severe = valid.Any(d => d.isStructurallyCritical && d.confidence > 0.5f);
                 result.stateGrade = severe ? 'e' : 'd';
                 result.score = StateToScore(result.stateGrade);
                 result.rationale = "구조안전성에 영향을 미치는 중대 손상 검출 → 긴급 조치 검토 필요";
@@ -266,8 +265,10 @@ namespace BridgeSenseDT.Assessment
             }
             else
             {
-                // 스케일 무관 대체 지표: 면적률 로그 스케일
-                magnitude = Mathf.Clamp01(Mathf.Log10(1f + d.maskAreaRatio * 99f) / 2f);
+                // 스케일·면적 정보가 없으므로 검출 신뢰도 자체를 크기 대체 지표로도 함께 쓴다.
+                // confidence를 magnitude에도 반영하고 아래서 다시 곱하므로 제곱 형태가 되어,
+                // 신뢰도가 낮은 검출은 심각도가 더 완만하게 낮아진다.
+                magnitude = Mathf.Clamp01(d.confidence);
             }
 
             return Mathf.Clamp01(baseWeight * magnitude * d.confidence);
@@ -370,10 +371,10 @@ namespace BridgeSenseDT.Assessment
         {
             string typeName = GetDefectName(worst.type);
             string scale = worst.estimatedWidthMm >= 0f
-                ? $"폭 약 {worst.estimatedWidthMm:F2}mm"
-                : $"면적률 {worst.maskAreaRatio * 100f:F1}%";
+                ? $"폭 약 {worst.estimatedWidthMm:F2}mm, "
+                : "";
             string suffix = totalCount > 1 ? $" 외 결함 {totalCount - 1}건" : "";
-            return $"{typeName} 검출 ({scale}, 신뢰도 {worst.confidence * 100f:F0}%){suffix}";
+            return $"{typeName} 검출 ({scale}신뢰도 {worst.confidence * 100f:F0}%){suffix}";
         }
 
         public static string GetDefectName(DefectType type)

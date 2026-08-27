@@ -72,10 +72,10 @@ namespace BridgeSenseDT.UI
                 var entry = session.FindEntry(view.EntryId); // 화면 항목에 대응하는 세션 데이터를 찾는다
                 if (entry != null)
                 {
-                    BridgeAnalysisResult analysis = AiInferenceManager.Instance.AnalyzeImage(view.Thumbnail); // 이미지 한 장당 RT-DETR+SegFormer 추론 1회 실행
+                    BridgeAnalysisResult analysis = AiInferenceManager.Instance.AnalyzeImage(view.Thumbnail); // 이미지 한 장당 RT-DETR 추론 1회 실행
 
-                    entry.Detections = analysis.Detections;            // bbox 원본은 향후 오버레이 시각화를 위해 보관
-                    entry.Defects = DefectExtractor.Extract(analysis); // 등급 산정 입력으로 쓸 결함 목록으로 축약
+                    entry.Detections = analysis.Detections; // bbox 원본은 향후 오버레이 시각화를 위해 보관
+                    entry.Defects = DefectExtractor.Extract(analysis, view.Thumbnail.width, view.Thumbnail.height); // 등급 산정 입력으로 쓸 결함 목록으로 축약
                     entry.Analyzed = true;
                 }
 

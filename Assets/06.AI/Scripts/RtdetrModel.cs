@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Unity.InferenceEngine;
 using UnityEngine;
 
-// RT-DETR v2 결함 검출 결과 1건 (ai/export/model_io_spec.md 1절, 4절 계약 기준)
+// RT-DETR v2 결함 검출 결과 1건
 public struct RtdetrDetection
 {
-    public int ClassId;   // 0~8, 결함 클래스 id (model_io_spec.md 4절 표: co=0, ef=1, le=2 ...)
+    public int ClassId;   // 0~8, 결함 클래스 id (co=0, ef=1, le=2 ...)
     public float Score;   // sigmoid 적용된 confidence, 0~1
     public float X1;      // 원본 이미지 픽셀 좌표계 기준 좌상단 x
     public float Y1;      // 원본 이미지 픽셀 좌표계 기준 좌상단 y
@@ -17,9 +17,9 @@ public struct RtdetrDetection
 // rtdetr.onnx 한 개만 감싸는 래퍼 - 전처리·추론·후처리를 이 클래스 안에서 전부 캡슐화한다.
 public class RtdetrModel : IDisposable
 {
-    private const int InputSize = 640;  // model_io_spec.md 1.1절: 고정 입력 해상도
-    private const int NumQueries = 300; // model_io_spec.md 1.2절: 쿼리(검출 후보) 개수, 파인튜닝에서도 안 바뀜
-    private const int NumClasses = 9;   // model_io_spec.md 4절: 결함 클래스 9종
+    private const int InputSize = 640;  // 고정 입력 해상도
+    private const int NumQueries = 300; // 쿼리(검출 후보) 개수, 파인튜닝에서도 안 바뀜
+    private const int NumClasses = 9;   // 결함 클래스 9종
 
     private readonly Worker worker;            // rtdetr.onnx를 실행하는 Sentis 워커
     private readonly Tensor<float> inputTensor; // 매 프레임 새로 할당하지 않도록 미리 만들어두고 재사용하는 입력 텐서

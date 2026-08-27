@@ -45,27 +45,20 @@ License.
 
 ## AI models
 
-Base architectures fine-tuned for this project:
+Base architecture fine-tuned for this project:
 
-- RT-DETR v2 (`PekingU/rtdetr_v2_r18vd` on Hugging Face) — object detection
-  backbone for defect detection.
-- SegFormer MiT-B2 (`nvidia/mit-b2` on Hugging Face) — semantic segmentation
-  backbone for crack/defect mask extraction.
+- RT-DETR v2 (`PekingU/rtdetr_v2_r18vd` on Hugging Face, Apache License 2.0)
+  — object detection backbone for defect detection.
 
-The fine-tuned weights (`Assets/06.AI/models/rtdetr.onnx`,
-`Assets/06.AI/models/segformer.onnx`) are not included in this repository
-(`.gitignore` excludes `*.onnx`) due to file size, but are published on
-Hugging Face:
+The fine-tuned weights (`Assets/06.AI/models/rtdetr.onnx`) are not included
+in this repository (`.gitignore` excludes `*.onnx`) due to file size, but
+are published on Hugging Face:
 
 - https://huggingface.co/shin0624/bridgesense-rtdetr
-- https://huggingface.co/shin0624/bridgesense-segformer
 
 To run AI inference from the source in this repository, download the
-compatible `rtdetr.onnx` / `segformer.onnx` from the links above and place
-them under `Assets/06.AI/models/` — see `ai/export/model_io_spec.md` for the
-input/output tensor contract. A built/playable version of the application
-bundling these weights is also distributed separately — see the download
-link in [README.md](README.md).
+compatible `rtdetr.onnx` from the link above and place it under
+`Assets/06.AI/models/`.
 
 ## Test/reference imagery and data
 

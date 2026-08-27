@@ -248,13 +248,13 @@ namespace BridgeSenseDT.Report
         {
             sb.Append("<section><h2>4. 결함별 검출 결과</h2><table><thead><tr>" +
                       "<th class=\"ctr\">No</th><th>부재</th><th>점검항목</th><th>시설영역</th><th>결함유형</th>" +
-                      "<th class=\"num\">면적률(%)</th><th class=\"num\">신뢰도(%)</th>" +
+                      "<th class=\"num\">신뢰도(%)</th>" +
                       "<th class=\"ctr\">상태</th><th class=\"num\">점수</th><th class=\"ctr\">등급</th>" +
                       "</tr></thead><tbody>");
 
             if (data.Defects.Count == 0)
             {
-                sb.Append("<tr><td colspan=\"10\" class=\"ctr\">검출된 결함이 없습니다.</td></tr>");
+                sb.Append("<tr><td colspan=\"9\" class=\"ctr\">검출된 결함이 없습니다.</td></tr>");
             }
             else
             {
@@ -268,7 +268,6 @@ namespace BridgeSenseDT.Report
                     sb.Append($"<td>{E(d.ChecklistItem)}</td>");
                     sb.Append($"<td>{E(d.FacilityArea)}</td>");
                     sb.Append($"<td>{E(d.DefectType)}</td>");
-                    sb.Append($"<td class=\"num\">{d.AreaRatioPercent:F1}</td>");
                     sb.Append($"<td class=\"num\">{d.ConfidencePercent:F0}</td>");
                     sb.Append($"<td class=\"ctr\">{d.StateGrade}</td>");
                     sb.Append($"<td class=\"num\">{d.Score}</td>");

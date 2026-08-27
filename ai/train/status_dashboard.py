@@ -1,7 +1,7 @@
 """
 TensorBoard 대신 쓸 간단한 학습 현황 웹 대시보드.
 
-RT-DETR/SegFormer 각각의 최신 체크포인트(trainer_state.json)를 읽어서 진행률·최근
+RT-DETR 최신 체크포인트(trainer_state.json)를 읽어서 진행률·최근
 loss/평가지표·완료 여부를 보여주는 페이지 하나만 자동 새로고침으로 띄운다.
 외부 패키지 없이 파이썬 표준 라이브러리(http.server)만 사용.
 
@@ -16,7 +16,6 @@ from pathlib import Path
 CHECKPOINTS_ROOT = Path("/workspace/ai/checkpoints")  # 모델별 체크포인트가 저장되는 상위 폴더
 JOBS = {
     "rtdetr_v2": {"label": "RT-DETR v2", "script": "train_rtdetr.py"},  # 표시 이름과 실행 스크립트 파일명(프로세스 감지용)
-    "segformer": {"label": "SegFormer MiT-B2", "script": "train_segformer.py"},
 }
 PORT = 6007  # TensorBoard(6006)와 안 겹치게 다른 포트 사용
 
@@ -92,7 +91,7 @@ def render_html() -> str:
     import time
 
     sections = []
-    for job_key, meta in JOBS.items():  # RT-DETR, SegFormer 각각에 대해
+    for job_key, meta in JOBS.items():  # 등록된 학습 작업 각각에 대해
         s = load_job_status(job_key, meta)  # 최신 상태 읽기
 
         if s["finished"]:  # 완료된 경우

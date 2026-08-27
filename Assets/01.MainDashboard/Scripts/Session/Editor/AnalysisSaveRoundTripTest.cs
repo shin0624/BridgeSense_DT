@@ -76,7 +76,6 @@ public static class AnalysisSaveRoundTripTest
             {
                 allPassed &= Check(report, $"{tag} 결함[0] 유형", a.Defects[0].type, b.Defects[0].type);
                 allPassed &= Check(report, $"{tag} 결함[0] 신뢰도", a.Defects[0].confidence, b.Defects[0].confidence);
-                allPassed &= Check(report, $"{tag} 결함[0] 면적률", a.Defects[0].maskAreaRatio, b.Defects[0].maskAreaRatio);
                 allPassed &= Check(report, $"{tag} 결함[0] 중대손상", a.Defects[0].isStructurallyCritical, b.Defects[0].isStructurallyCritical);
             }
         }
@@ -150,7 +149,6 @@ public static class AnalysisSaveRoundTripTest
                 {
                     type = DefectType.ConcreteCrack,
                     confidence = 0.27f,
-                    maskAreaRatio = 0.0312f,
                     estimatedWidthMm = -1f,
                     isStructurallyCritical = false,
                 },
@@ -170,7 +168,6 @@ public static class AnalysisSaveRoundTripTest
                 {
                     type = DefectType.ExposedRebar,
                     confidence = 0.42f,
-                    maskAreaRatio = 0.18f,
                     estimatedWidthMm = -1f,
                     isStructurallyCritical = true,
                 },

@@ -146,7 +146,6 @@ namespace BridgeSenseDT.Report
                         ChecklistItem = SafetyGradeEvaluator.GetChecklistItemName(image.ChecklistItem),
                         FacilityArea = GetAreaName(SafetyGradeEvaluator.GetFacilityArea(image.ChecklistItem)),
                         DefectType = SafetyGradeEvaluator.GetDefectName(defect.type),
-                        AreaRatioPercent = defect.maskAreaRatio * 100f,
                         ConfidencePercent = defect.confidence * 100f,
                         StateGrade = evaluation.stateGrade,
                         Score = evaluation.score,
@@ -284,7 +283,8 @@ namespace BridgeSenseDT.Report
 
         /// <summary>
         /// 표시할 검출 사각형을 모은다.
-        /// RT-DETR 검출이 있으면 그것을 쓰고, 없으면 SegFormer 마스크에서 뽑아둔 사각형을 쓴다.
+        /// entry.Detections(원본 RT-DETR 검출)가 있으면 그것을 우선 쓰고, 없으면(저장 파일이
+        /// bbox 원본 없이 결함 목록만 갖고 있는 과거 포맷인 경우 등) entry.Defects[].boxes를 쓴다.
         /// 화면(ElevationDetailView)과 같은 규칙이라 보고서와 화면이 같은 위치를 가리킨다.
         /// </summary>
         private static void CollectBoxes(AnalysisEntry entry, ImagePair pair)
@@ -351,13 +351,13 @@ namespace BridgeSenseDT.Report
 
             DefectRow worstDefect = data.Defects
                 .OrderBy(d => SafetyGradeEvaluator.GradeToRank(d.Grade))
-                .ThenByDescending(d => d.AreaRatioPercent)
+                .ThenByDescending(d => d.ConfidencePercent)
                 .FirstOrDefault();
 
             if (worstDefect != null)
             {
                 data.Verdict.Rationale =
-                    $"{worstDefect.ComponentName} {worstDefect.DefectType} 면적률 {worstDefect.AreaRatioPercent:F1}%, " +
+                    $"{worstDefect.ComponentName} {worstDefect.DefectType} 신뢰도 {worstDefect.ConfidencePercent:F0}%, " +
                     $"상태 {worstDefect.StateGrade} 판정이 종합 등급을 결정";
             }
             else

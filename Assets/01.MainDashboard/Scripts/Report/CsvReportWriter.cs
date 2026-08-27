@@ -95,7 +95,7 @@ namespace BridgeSenseDT.Report
         {
             Row(sb, "[3. 결함별 검출 결과]");
             Row(sb, "No", "부재ID", "부재명", "점검항목", "시설영역", "결함유형",
-                "면적률(%)", "신뢰도(%)", "상태", "점수", "등급");
+                "신뢰도(%)", "상태", "점수", "등급");
 
             foreach (var defect in data.Defects)
             {
@@ -106,7 +106,6 @@ namespace BridgeSenseDT.Report
                     defect.ChecklistItem,
                     defect.FacilityArea,
                     defect.DefectType,
-                    Number(defect.AreaRatioPercent),
                     Number(defect.ConfidencePercent, "0"),
                     defect.StateGrade.ToString(),
                     defect.Score.ToString(),

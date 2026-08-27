@@ -5,7 +5,7 @@ using Unity.InferenceEngine;
 using UnityEditor;
 using UnityEngine;
 
-// ai/export/model_io_spec.md에 정의된 입출력 텐서 계약대로 rtdetr.onnx / segformer.onnx가
+// 정의된 입출력 텐서 계약대로 rtdetr.onnx가
 // Sentis(Inference Engine)에서 실제로 로드·실행되는지만 확인하는 1회성 스모크 테스트.
 public static class SentisSmokeTest
 {
@@ -25,14 +25,6 @@ public static class SentisSmokeTest
             {
                 ("logits", new TensorShape(1, 300, 9)),
                 ("pred_boxes", new TensorShape(1, 300, 4)),
-            });
-
-        allPassed &= TestModel(
-            report, "SegFormer", "Assets/06.AI/models/segformer.onnx",
-            new TensorShape(1, 3, 512, 512),
-            new (string name, TensorShape shape)[]
-            {
-                ("logits", new TensorShape(1, 10, 512, 512)),
             });
 
         report.AppendLine();

@@ -19,8 +19,7 @@ namespace BridgeSenseDT.Session
         // RT-DETR 원본 검출. 등급 산정에는 쓰이지 않지만 향후 bbox 오버레이 시각화에 필요해 함께 보관한다.
         public List<RtdetrDetection> Detections = new List<RtdetrDetection>();
 
-        // 등급 산정의 실제 입력값. SegFormer 마스크(512x512)는 여기서 클래스별 면적률로 이미 축약돼 있어
-        // 원본 마스크를 저장하지 않아도 등급을 그대로 재계산할 수 있다.
+        // 등급 산정의 실제 입력값. RT-DETR 검출 결과가 여기서 결함 목록으로 이미 축약돼 있다.
         public List<DetectedDefect> Defects = new List<DetectedDefect>();
     }
 
