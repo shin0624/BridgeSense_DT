@@ -1,0 +1,33 @@
+MIT License
+
+Copyright (c) 2026 SHIN BEOM SU
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+This license applies to the original source code of this repository
+(Unity/C# scripts under `Assets/01.MainDashboard/`, `Assets/06.AI/Scripts/`,
+`Assets/06.AI/Editor/`, and the Python code under `ai/`, `scripts/`),
+authored by the copyright holder above.
+
+It does NOT apply to third-party assets, plugins, libraries, fonts, or
+pretrained model weights bundled with or referenced by this project. See
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for those components and
+their respective licenses.
