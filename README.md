@@ -52,7 +52,7 @@ RT-DETR v2(`PekingU/rtdetr_v2_r18vd` 기반)와 SegFormer MiT-B2(`nvidia/mit-b2`
 
 ## 빌드된 실행 파일 다운로드
 
-(다운로드 링크 추가 예정 — Google Drive)
+[BridgeSense DT 다운로드(GoogleDrive)](https://drive.google.com/file/d/1MroAdiGLT7TnD_KqkW2lNzvOOGsglGU8/view?usp=sharing)
 
 ## 개발 환경
 
