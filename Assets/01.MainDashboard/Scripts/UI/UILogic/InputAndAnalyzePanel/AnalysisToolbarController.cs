@@ -20,12 +20,14 @@ public class AnalysisToolbarController : MonoBehaviour
     [SerializeField] private Button saveAsButton;        // "다른 이름으로 저장"
     [SerializeField] private Button newAnalysisButton;   // "새 분석 시작"
     [SerializeField] private Button loadHistoryButton;   // "분석 이력 불러오기"
+    [SerializeField] private Button quitButton;          // "종료"
 
     // 결과 화면에서 이미지 입력 화면으로 돌아가는 버튼. 아직 UI에 두지 않았다면 비워둬도 된다.
     // 다만 이 버튼이 없으면 한 번 분석한 세션에 이미지를 더 추가할 방법이 없다.
     [SerializeField] private Button returnToEditingButton;
 
     [SerializeField] private UnsavedChangesPopupController unsavedChangesPopup; // 미저장 상태에서 뜨는 확인 팝업
+    [SerializeField] private QuitConfirmPopupController quitConfirmPopup;       // "종료" 클릭 시 뜨는 확인 팝업
 
     [SerializeField] private TMP_Text saveStatusText; // 현재 파일명과 저장 여부 표시(선택, 비워둬도 동작함)
 
@@ -40,6 +42,8 @@ public class AnalysisToolbarController : MonoBehaviour
         loadHistoryButton.onClick.AddListener(OnLoadHistoryClicked);
         if (returnToEditingButton != null)
             returnToEditingButton.onClick.AddListener(OnReturnToEditingClicked);
+        if (quitButton != null)
+            quitButton.onClick.AddListener(OnQuitButtonClicked);
     }
 
     private void OnDisable()
@@ -51,6 +55,8 @@ public class AnalysisToolbarController : MonoBehaviour
         loadHistoryButton.onClick.RemoveListener(OnLoadHistoryClicked);
         if (returnToEditingButton != null)
             returnToEditingButton.onClick.RemoveListener(OnReturnToEditingClicked);
+        if (quitButton != null)
+            quitButton.onClick.RemoveListener(OnQuitButtonClicked);
     }
 
     private void Update()
@@ -82,6 +88,11 @@ public class AnalysisToolbarController : MonoBehaviour
     private void OnReturnToEditingClicked()
     {
         AnalysisSessionManager.Instance.ReturnToEditing();
+    }
+
+    private void OnQuitButtonClicked()
+    {
+        quitConfirmPopup.Open();
     }
 
     /// <summary>

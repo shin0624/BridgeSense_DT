@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BridgeSenseDT.UI;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +18,11 @@ public class MainDashboardManager : MonoBehaviour
     [SerializeField] private GameObject overviewPanel;
     [SerializeField] private GameObject popupPanelParent;// 팝업패널 부모 오브젝트
 
-    private void Awake() 
+    [Header("전환 애니메이션(선택)")]
+    [Tooltip("InputAndAnalyzePanel ↔ OverviewPanel 전환에 쓸 크로스페이드. 비워두면 즉시 전환한다")]
+    [SerializeField] private PanelCrossfadeTransition panelCrossfade;
+
+    private void Awake()
     {
         if(Instance != null && Instance != this)
         {
@@ -44,8 +49,7 @@ public class MainDashboardManager : MonoBehaviour
     {
         if(currentPanelState != MainDashboardPanelState.OverView)
         {
-            inputAndAnalyzePanel.SetActive(false);
-            overviewPanel.SetActive(true);
+            SwitchPanels(from: inputAndAnalyzePanel, to: overviewPanel);
             currentPanelState = MainDashboardPanelState.OverView;
         }
     }
@@ -54,9 +58,23 @@ public class MainDashboardManager : MonoBehaviour
     {
         if(currentPanelState != MainDashboardPanelState.Input)
         {
-            overviewPanel.SetActive(false);
-            inputAndAnalyzePanel.SetActive(true);
+            SwitchPanels(from: overviewPanel, to: inputAndAnalyzePanel);
             currentPanelState = MainDashboardPanelState.Input;
+        }
+    }
+
+    // 크로스페이드 컴포넌트가 연결돼 있으면 서서히 전환하고, 없으면 기존처럼 즉시 SetActive로 전환한다.
+    // 씬에 아직 컴포넌트를 붙이지 않은 경우에도 그대로 동작해야 하므로 null 여부로 분기한다.
+    private void SwitchPanels(GameObject from, GameObject to)
+    {
+        if (panelCrossfade != null)
+        {
+            panelCrossfade.Show(from, to);
+        }
+        else
+        {
+            from.SetActive(false);
+            to.SetActive(true);
         }
     }
 
@@ -90,11 +108,17 @@ public class MainDashboardManager : MonoBehaviour
         if(popupPanel != null)
         {
             if(!activePopupPanels.Contains(popupPanel))// 이미 활성화된 팝업 패널이 아니면
-            {   
+            {
                 activePopupPanels.Add(popupPanel);// 활성화된 팝업 패널 목록에 추가
                 popupPanel.SetActive(true);// 팝업 패널 활성화
+
+                // 팝업에 PopupPopInAnimator가 붙어 있으면 정중앙에서 확대되며 나타나는 연출을 재생한다.
+                // 없는 팝업은 그냥 즉시 나타난다.
+                var popIn = popupPanel.GetComponent<PopupPopInAnimator>();
+                if (popIn != null)
+                    popIn.Play();
             }
-            
+
         }
     }
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using BridgeSenseDT.Assessment;
+using BridgeSenseDT.UI;
 using SFB;
 using UnityEngine;
 
@@ -19,9 +20,16 @@ namespace BridgeSenseDT.Session
     {
         public static AnalysisSessionManager Instance { get; private set; }
 
+        // ImageUploadPanel은 InputAndAnalyzePanel 안에서 AnalyzeResultPanel과 같은 자리를 그대로 덮고 있는
+        // 오버레이 패널이다. AnalyzeResultPanel(및 그 안의 InputImagePanel)은 항상 켜져 있고,
+        // Editing/Analyzed 전환은 오직 이 덮개 하나를 켜고 끄는 것으로 이뤄진다.
         [SerializeField] private GameObject imageUploadPanel;                              // Editing 상태에서만 보이는 업로드 패널
         [SerializeField] private BridgeImageRegistrationController registrationController; // 등록 목록과 입력 필드를 그리는 뷰
         [SerializeField] private AnalysisResultListView resultListView;                    // 결과 카드를 그리는 뷰
+
+        [Header("전환 애니메이션(선택)")]
+        [Tooltip("ImageUploadPanel이 사라지고 나타날 때 쓸 페이드. 비워두면 즉시 SetActive로 전환한다")]
+        [SerializeField] private PanelCrossfadeTransition panelCrossfade;
 
         public AnalysisSession CurrentSession { get; private set; }
         public bool IsDirty { get; private set; }          // 마지막 저장 이후 바뀐 내용이 있는지
@@ -57,7 +65,9 @@ namespace BridgeSenseDT.Session
 
         private void Start()
         {
-            ApplyState(AnalysisSessionState.Editing); // 시작 시에는 항상 업로드 패널이 보이는 상태
+            // 시작 시에는 항상 업로드 패널이 보이는 상태. 씬 진입 첫 프레임부터 굳이 페이드를
+            // 재생할 이유가 없으므로 애니메이션 없이 즉시 반영한다.
+            ApplyState(AnalysisSessionState.Editing, animate: false);
         }
 
         private void OnDestroy()
@@ -310,10 +320,28 @@ namespace BridgeSenseDT.Session
             return $"{bridgeName}_{System.DateTime.Now:yyyyMMdd_HHmm}";
         }
 
-        private void ApplyState(AnalysisSessionState state)
+        /// <summary>
+        /// ImageUploadPanel은 덮개이므로 켜고 끄는 대상은 그것 하나뿐이다.
+        /// Editing으로 갈 땐 나타나고(등록 화면을 다시 덮음), Analyzed로 갈 땐 사라진다(밑에 깔린
+        /// AnalyzeResultPanel이 드러남). AnalyzeResultPanel 자체는 항상 활성 상태라 건드리지 않는다.
+        /// </summary>
+        private void ApplyState(AnalysisSessionState state, bool animate = true)
         {
             CurrentSession.State = state;
-            imageUploadPanel.SetActive(state == AnalysisSessionState.Editing);
+
+            bool editing = state == AnalysisSessionState.Editing;
+
+            if (animate && panelCrossfade != null)
+            {
+                if (editing)
+                    panelCrossfade.Show(from: null, to: imageUploadPanel);   // 페이드인
+                else
+                    panelCrossfade.Show(from: imageUploadPanel, to: null);   // 페이드아웃
+            }
+            else
+            {
+                imageUploadPanel.SetActive(editing);
+            }
         }
     }
 }
