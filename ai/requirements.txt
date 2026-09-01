@@ -1,13 +1,18 @@
-# torch/torchvision/torchaudio는 컨테이너 시스템(전역)에 2.4.1+cu124가 깔려있지만,
-# 이 Pod의 GPU(RTX PRO 4000 Blackwell, sm_120)는 2.4.1이 지원하는 아키텍처(~sm_90)보다
-# 최신이라 실제 CUDA 연산이 전부 실패한다("no kernel image is available"). 그래서 venv
-# 안에서만 아래 버전으로 덮어써서 사용한다(시스템 전역 설치는 건드리지 않음).
---extra-index-url https://download.pytorch.org/whl/cu128
-torch==2.7.1+cu128
-torchvision==0.22.1+cu128
-torchaudio==2.7.1+cu128
+# 엘리스 AI 클라우드 환경 기준 (2026-09-01 재작성).
+# GPU: NVIDIA A100 80GB PCIe (MIG 3g.40gb slice로 실사용 ~40GB), CUDA 12.2, 드라이버 535, sm_80.
+# RunPod의 Blackwell(sm_120) 특수 사정(구버전 torch 불가)은 여기선 해당 없음 —
+# sm_80은 표준 torch 휠(cu121)이 그대로 지원한다. 그래도 설치 후 실제 텐서 연산을
+# 한 번 돌려서(torch.cuda.is_available()만으로는 불충분) 확인할 것.
+#
+# torch 2.7.1로 고정: export_onnx.py가 torch.onnx.export(dynamo=True, dynamic_shapes=...)를
+# 쓰는데 이 시그니처(dynamic_shapes 인자)는 torch>=2.5에서 들어왔다. 2.4.1에서는
+# dynamic_shapes를 안 받아서 ONNX 익스포트가 깨진다. sm_80 A100은 2.7.1 cu121 휠로 정상 동작 확인됨.
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch==2.7.1
+torchvision==0.22.1
+torchaudio==2.7.1
 
-transformers==4.49.0  # torch>=5.0은 torch.distributed.tensor.DTensor를 요구해서 구버전 torch에서 import가 깨졌던 이력이 있어 4.x로 고정. torch 2.7.1과는 정상 동작 확인됨
+transformers==4.49.0  # torch>=5.0은 torch.distributed.tensor.DTensor를 요구해서 구버전 torch에서 import가 깨졌던 이력이 있어 4.x로 고정. RT-DETR(train_rtdetr.py) 재사용을 위해 유지
 accelerate
 pycocotools
 torchmetrics
@@ -16,6 +21,12 @@ pillow
 numpy
 tensorboard
 evaluate
+
+# --- 분할(DeepLabV3+) 신규 ---
+segmentation-models-pytorch==0.3.4  # smp, MIT License. DeepLabV3Plus + smp.losses/smp.metrics 사용
+albumentations==1.4.18  # 분할 전처리(리사이즈/정규화/증강). MIT License. smp에는 HF image_processor가 없어 직접 구현. 1.4.15는 새 albucore(0.2.16)와 preserve_channel_dim import가 깨져서 1.4.18로 올림
+
+# --- ONNX ---
 onnx
 onnxruntime
 onnxscript  # torch.onnx.export(dynamo=True)에 필요. 레거시 tracing exporter는 RT-DETR의 deformable attention을 잘못 변환해서(PyTorch 대비 logits 오차 1.24) dynamo 방식으로 전환함 — export_onnx.py 참고

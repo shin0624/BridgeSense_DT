@@ -9,7 +9,9 @@ import random
 import time
 from pathlib import Path
 
+import numpy as np
 from PIL import Image
+from pycocotools import mask as coco_mask
 from pycocotools.coco import COCO
 from torch.utils.data import Dataset
 
@@ -133,6 +135,124 @@ class CocoDetectionDataset(Dataset):
             "pixel_values": encoding["pixel_values"][0],  # 배치 차원(0번째)을 제거한 전처리된 이미지 텐서
             "labels": encoding["labels"][0],  # 배치 차원을 제거한 인코딩된 라벨(class_labels/boxes 등) 딕셔너리
         }
+
+
+class CocoSegmentationDataset(Dataset):
+    """DeepLabV3+(smp, 순수 PyTorch)용 시맨틱 분할 COCO Dataset.
+
+    convert_to_coco.py가 만든 COCO json의 segmentation(폴리곤)을 픽셀 마스크로
+    rasterize한다. 클래스 id 규약:
+      - 0 = 배경/정상 (어노테이션이 없는 픽셀)
+      - 1..9 = 결함 9종 (COCO category_id 0..8 에 +1 shift)
+    이 +1 shift는 RT-DETR(0-base)과 DeepLabV3+(배경 0을 위해 1-base)를 맞추기 위한
+    것이고 CLAUDE.md 3절에 명시된 규약이다.
+
+    smp에는 HF image_processor가 없으므로 전처리(리사이즈·정규화·증강)는
+    albumentations transform으로 외부에서 주입한다. transform은 image(HWC uint8)와
+    mask(HW int)를 함께 받아 image(CHW float tensor)와 mask(HW long tensor)를 돌려주는
+    형태여야 한다(build_seg_transforms 참고).
+    """
+
+    NUM_CLASSES = 10  # 배경 1 + 결함 9
+
+    def __init__(
+        self,
+        images_dir: str,
+        annotation_json: str,
+        transform,
+        oversample_steel: int = 1,
+        max_samples: int | None = None,
+        max_per_material: int | None = None,
+    ):
+        self.images_dir = Path(images_dir)
+        self.coco = COCO(annotation_json)
+        self.transform = transform  # albumentations Compose (image+mask)
+        self.image_ids = build_balanced_index(
+            self.coco, oversample_steel, max_per_material
+        )
+        if max_samples is not None:
+            self.image_ids = self.image_ids[:max_samples]
+
+    def __len__(self):
+        return len(self.image_ids)
+
+    def _build_mask(self, image_id: int, height: int, width: int) -> np.ndarray:
+        """이 이미지의 모든 어노테이션을 (H, W) uint8 마스크로 rasterize.
+        겹치는 영역은 나중 어노테이션이 앞의 것을 덮어쓴다(뒤에 그리는 순서)."""
+        mask = np.zeros((height, width), dtype=np.uint8)  # 0 = 배경
+        ann_ids = self.coco.getAnnIds(imgIds=image_id)
+        for ann in self.coco.loadAnns(ann_ids):
+            seg = ann.get("segmentation")
+            if not seg:
+                continue
+            # convert_to_coco.py는 항상 폴리곤 리스트([[x1,y1,x2,y2,...]])로 저장한다
+            rles = coco_mask.frPyObjects(seg, height, width)
+            rle = coco_mask.merge(rles) if isinstance(rles, list) else rles
+            m = coco_mask.decode(rle)  # (H, W) 0/1
+            mask[m > 0] = ann["category_id"] + 1  # +1 shift (배경 0 확보)
+        return mask
+
+    def __getitem__(self, idx, _skip_count: int = 0):
+        image_id = self.image_ids[idx]
+        img_info = self.coco.imgs[image_id]
+        path = self.images_dir / img_info["file_name"]
+        try:
+            image = open_image_with_retry(path)
+        except OSError as e:
+            if _skip_count >= 20:
+                raise
+            print(f"경고: 이미지 열기 실패, 건너뜀 - {path} ({e})")
+            return self.__getitem__((idx + 1) % len(self), _skip_count=_skip_count + 1)
+
+        width, height = image.size
+        mask = self._build_mask(image_id, height, width)
+
+        sample = self.transform(image=np.asarray(image), mask=mask)
+        return {
+            "pixel_values": sample["image"],  # CHW float tensor (정규화됨)
+            "labels": sample["mask"].long(),  # (H, W) long tensor (클래스 id)
+        }
+
+
+def build_seg_transforms(image_size: int = 512, train: bool = True):
+    """DeepLabV3+ 분할용 albumentations 파이프라인.
+
+    - AI-Hub 원본이 이미 512x512라 리사이즈는 안전장치(다른 크기가 섞여 들어와도 깨지지 않게).
+    - 정규화는 ImageNet 통계를 쓴다. encoder_weights=None(무작위 초기화)이라 특정 통계에
+      맞출 이유는 없지만, [0,1] 대비 학습이 약간 더 안정적이고 ONNX 단계(Unity)와 통계만
+      공유하면 되므로 관례값을 쓴다 — 이 값은 export/추론 쪽과 반드시 일치시킬 것.
+    - 증강은 기하 변환 위주(색상 증강은 결함 텍스처를 왜곡할 수 있어 약하게).
+    """
+    import albumentations as A
+    from albumentations.pytorch import ToTensorV2
+
+    mean = (0.485, 0.456, 0.406)
+    std = (0.229, 0.224, 0.225)
+
+    if train:
+        aug = [
+            A.HorizontalFlip(p=0.5),
+            A.VerticalFlip(p=0.5),
+            A.RandomRotate90(p=0.5),
+            A.ShiftScaleRotate(
+                shift_limit=0.05, scale_limit=0.1, rotate_limit=15,
+                border_mode=0, p=0.3,
+            ),
+            A.RandomBrightnessContrast(
+                brightness_limit=0.15, contrast_limit=0.15, p=0.3
+            ),
+        ]
+    else:
+        aug = []
+
+    return A.Compose(
+        [
+            A.Resize(image_size, image_size),
+            *aug,
+            A.Normalize(mean=mean, std=std),
+            ToTensorV2(),
+        ]
+    )
 
 
 def build_collate_fn(image_processor):

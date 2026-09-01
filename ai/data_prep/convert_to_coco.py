@@ -19,11 +19,16 @@ DataInfo_AIHUB.pdf p.5 "파일명 명명 규칙" 표가 co/ef/le/... 코드를 �
 있는 반면, label 문자열은 예시(ConcreteCrack, Spalling 등)만 있고 전 클래스에 대해
 일관되게 문서화되어 있지 않다 (실제로 강재_강재손상 폴더의 label은 "SteelDefect"였음).
 
-실행:
+실행 (엘리스 경로. train/val 각각 한 번씩):
     python convert_to_coco.py \
-        --images-dir /workspace/data/aihub_extracted/Training/원천데이터 \
-        --labels-dir /workspace/data/aihub_extracted/Training/라벨링데이터 \
-        --out /workspace/data/coco_format/train.json
+        --images-dir /home/elicer/BridgeSense_DT/data/aihub_extracted/Training/원천데이터 \
+        --labels-dir /home/elicer/BridgeSense_DT/data/aihub_extracted/Training/라벨링데이터 \
+        --out /home/elicer/BridgeSense_DT/data/coco_format/train.json
+
+    python convert_to_coco.py \
+        --images-dir /home/elicer/BridgeSense_DT/data/aihub_extracted/Validation/원천데이터 \
+        --labels-dir /home/elicer/BridgeSense_DT/data/aihub_extracted/Validation/라벨링데이터 \
+        --out /home/elicer/BridgeSense_DT/data/coco_format/val.json
 """
 import argparse
 import json

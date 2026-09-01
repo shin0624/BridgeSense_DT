@@ -11,22 +11,23 @@ Hungarian 매칭 기반 sigmoid focal loss라 클래스별 loss 가중치를 직
 손실 함수 자체를 수정해야 하는 더 큰 작업이 필요해서, 이번 스크립트는 오버샘플링만
 적용한다 — 부족하면 후속 작업으로 검토.
 
-실행 (스모크 테스트, 소규모 샘플로 파이프라인 검증):
+실행 (스모크 테스트, 소규모 샘플로 파이프라인 검증 — 본 학습 전 필수):
     python train_rtdetr.py \
-        --train-json /workspace/data/coco_format/train.json \
-        --train-images-dir /workspace/data/aihub_extracted_full/Training/원천데이터 \
-        --val-json /workspace/data/coco_format/val.json \
-        --val-images-dir /workspace/data/aihub_extracted_full/Validation/원천데이터 \
-        --output-dir /workspace/ai/checkpoints/rtdetr_smoke \
+        --train-json /home/elicer/BridgeSense_DT/data/coco_format/train.json \
+        --train-images-dir /home/elicer/BridgeSense_DT/data/aihub_extracted/Training/원천데이터 \
+        --val-json /home/elicer/BridgeSense_DT/data/coco_format/val.json \
+        --val-images-dir /home/elicer/BridgeSense_DT/data/aihub_extracted/Validation/원천데이터 \
+        --output-dir /home/elicer/BridgeSense_DT/ai/checkpoints/rtdetr_smoke \
         --epochs 1 --max-train-samples 64 --max-eval-samples 32 --oversample-steel 1
 
-실행 (본 학습, tmux 세션 안에서):
+실행 (본 학습 — 백그라운드 유지 방식 확인 후 nohup/tmux/setsid 안에서.
+      자동 재시도가 필요하면 train_rtdetr_auto.sh 사용):
     python train_rtdetr.py \
-        --train-json /workspace/data/coco_format/train.json \
-        --train-images-dir /workspace/data/aihub_extracted_full/Training/원천데이터 \
-        --val-json /workspace/data/coco_format/val.json \
-        --val-images-dir /workspace/data/aihub_extracted_full/Validation/원천데이터 \
-        --output-dir /workspace/ai/checkpoints/rtdetr \
+        --train-json /home/elicer/BridgeSense_DT/data/coco_format/train.json \
+        --train-images-dir /home/elicer/BridgeSense_DT/data/aihub_extracted/Training/원천데이터 \
+        --val-json /home/elicer/BridgeSense_DT/data/coco_format/val.json \
+        --val-images-dir /home/elicer/BridgeSense_DT/data/aihub_extracted/Validation/원천데이터 \
+        --output-dir /home/elicer/BridgeSense_DT/ai/checkpoints/rtdetr_v2 \
         --epochs 15 --bf16
 """
 import argparse

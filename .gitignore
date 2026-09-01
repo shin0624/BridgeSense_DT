@@ -74,15 +74,22 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-# --- ai/ (Python, RT-DETR v2 / SegFormer 학습) ---
+# --- ai/ (Python, RT-DETR v2 / DeepLabV3+ 학습) ---
 __pycache__/
 *.pyc
 .venv/
 venv/
 *.egg-info/
 
-# 학습 산출물·체크포인트·ONNX (HuggingFace Hub 또는 /workspace 로컬 보관용, git 커밋 금지)
+# API 키/토큰 (git 커밋 금지)
+ai/data_prep/api_key.txt
+ai/data_prep/github_token.txt
+ai/**/*token*.txt
+ai/**/*api_key*.txt
+
+# 학습 산출물·체크포인트·ONNX (로컬 보관용, git 커밋 금지)
 ai/checkpoints/
+ai/models/
 ai/outputs/
 ai/wandb/
 *.pt
