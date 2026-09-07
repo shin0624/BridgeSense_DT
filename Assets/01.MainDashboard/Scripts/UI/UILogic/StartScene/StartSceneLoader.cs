@@ -11,7 +11,7 @@ namespace BridgeSenseDT.UI
     /// <summary>
     /// StartScene에서 무거운 자원을 미리 불러온 뒤 메인 대시보드로 넘어가는 로딩 컨트롤러.
     ///
-    /// 미리 불러오는 대상은 두 가지다.
+    /// 미리 불러오는 대상
     /// 1. AI 모델 두 개(합쳐 185MB). 대시보드 진입 시점에 읽으면 화면이 수 초 멈춘다.
     ///    AiInferenceManager가 DontDestroyOnLoad라 여기서 읽어두면 그대로 넘어간다.
     /// 2. 교량 제원 자료(8MB). BridgeSpecRepository는 static이라 씬이 바뀌어도 유지된다.
@@ -178,9 +178,8 @@ namespace BridgeSenseDT.UI
         }
 
         /// <summary>
-        /// 페이드에는 CanvasGroup이 필요하다. 없으면 만들어 붙인다.
-        /// 버튼 배경과 글자를 따로 페이드하면 요소가 늘어날 때마다 코드를 고쳐야 하므로
-        /// 묶음 단위로 투명도를 다루는 편이 낫다.
+        /// 페이드에는 CanvasGroup이 필요. 없으면 만들어 붙인다.
+        /// 버튼 배경과 글자를 따로 페이드하면 요소가 늘어날 때마다 코드를 고쳐야 하므로 묶음 단위로 투명도를 다루는 편이 낫다.
         /// </summary>
         private static CanvasGroup GetOrAddCanvasGroup(GameObject target)
         {

@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rtdetrModelAsset: {fileID: 5022602860645237092, guid: c6388c5ab8a25f94bb1a40e12025d594, type: 3}
-  segformerModelAsset: {fileID: 5022602860645237092, guid: a2b1e30db89334943841c95456a6fcd3, type: 3}
+  deeplabModelAsset: {fileID: 5022602860645237092, guid: 41b89434c40231d43a7ad96a5571d4be, type: 3}
   rtdetrScoreThreshold: 0.1

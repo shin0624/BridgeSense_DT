@@ -118,3 +118,4 @@ ai/wandb/
 /data/*.xlsx
 /data/*.xls
 /Assets/UI_Asset
+/Assets/06.AI/TestImages
