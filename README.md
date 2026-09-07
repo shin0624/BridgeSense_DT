@@ -8,7 +8,7 @@
 
 ## 주요 기능
 
-- **AI 결함 탐지** : RT-DETR v2(객체 검출) 모델을 Unity Inference Engine(Sentis)으로 인프로세스 실행. 별도 추론 서버 없이 동작합니다.
+- **AI 결함 탐지·분할** : RT-DETR v2(객체 검출) + DeepLabV3+(픽셀 분할) 두 모델을 Unity Inference Engine(Sentis)으로 인프로세스 실행. 별도 추론 서버 없이 동작합니다.
 - **안전등급 자동 산정** : 검출된 결함을 국토안전관리원 제3종시설물 안전등급 평가 방식에 따라 부재별/종합 등급으로 환산합니다.
 - **3D 디지털 트윈 뷰어** : 교량 3D 모델의 부재를 등급에 따라 색상으로 표시하고, 결함 목록에서 클릭하면 해당 부재로 카메라가 이동합니다.
 - **이미지 업로드** : 파일 탐색기 다이얼로그와 Windows 네이티브 드래그 앤 드롭을 모두 지원합니다.
@@ -22,7 +22,7 @@ Assets/
 ├── 01.MainDashboard/       # Unity C# 소스 (UI, 3D 뷰어, 세션, 보고서 등)
 │   └── Scripts/
 ├── 06.AI/                  # Sentis 추론 래퍼, 에디터 검증 도구
-│   ├── Scripts/            # AiInferenceManager, RtdetrModel
+│   ├── Scripts/            # AiInferenceManager, RtdetrModel, DeeplabModel
 │   ├── Editor/             # 모델 로딩/추론 검증용 에디터 툴
 │   ├── TestImages/         # 수동 검증용 샘플 이미지
 │   └── models/             # .onnx 가중치 (저장소에 미포함, 아래 "AI 모델" 참고)
@@ -31,7 +31,7 @@ Assets/
 
 ai/                         # AI 모델 학습 파이프라인 (Python, 이 저장소와 별도 실행 환경)
 ├── data_prep/              # AI-Hub 원본 데이터 압축 해제, COCO 포맷 변환, 데이터 검증
-├── train/                  # RT-DETR v2 학습
+├── train/                  # RT-DETR v2 / DeepLabV3+ 학습
 └── export/                 # ONNX 변환 및 검증
 
 data/                       # 교량 제원 참고 데이터
@@ -40,15 +40,19 @@ scripts/                    # 개발 환경 부트스트랩 스크립트
 
 ## AI 모델
 
-RT-DETR v2(`PekingU/rtdetr_v2_r18vd` 기반, Apache License 2.0)를 AI-Hub 교량 외관점검 데이터로 파인튜닝한 뒤 ONNX로 변환해 사용합니다. 학습 파이프라인 전체(`ai/`)는 이 저장소에 포함되어 있습니다.
+- **RT-DETR v2** (`PekingU/rtdetr_v2_r18vd` 기반, Apache License 2.0) — 결함 객체 검출(bbox). AI-Hub 교량 외관점검 데이터로 파인튜닝.
+- **DeepLabV3+** (`segmentation_models_pytorch`, ResNet-34 인코더, MIT License) — 결함 픽셀 분할(mask). 사전학습 가중치를 쓰지 않고(`encoder_weights=None`) AI-Hub 데이터로 처음부터 학습.
+
+학습 파이프라인 전체(`ai/`)는 이 저장소에 포함되어 있습니다.
 
 파인튜닝된 가중치는 Hugging Face에 공개되어 있습니다.
 
 - RT-DETR v2 (결함 검출): https://huggingface.co/shin0624/bridgesense-rtdetr
+- DeepLabV3+ (결함 분할): (업로드 예정)
 
 용량 문제로 이 저장소에는 `.onnx` 파일을 직접 포함하지 않았습니다.
 소스 코드를 직접 빌드해 실행하려면 Unity Engine 6000.0.69f1 환경에서 위 링크의
-`rtdetr.onnx`를 내려받아 `Assets/06.AI/models/`에 넣어야 합니다.
+`rtdetr.onnx` / `deeplabv3plus.onnx`를 내려받아 `Assets/06.AI/models/`에 넣어야 합니다.
 
 ## 개발 환경
 

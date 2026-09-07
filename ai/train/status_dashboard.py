@@ -1,19 +1,25 @@
 """
-TensorBoard 대신 쓸 간단한 학습 현황 웹 대시보드.
+TensorBoard 대신 쓸 간단한 학습 현황 웹 대시보드 (읽기 전용 모니터링 — CLAUDE.md 8절 예외).
 
-RT-DETR 최신 체크포인트(trainer_state.json)를 읽어서 진행률·최근
+RT-DETR 최신 체크포인트(HF Trainer의 trainer_state.json)를 읽어서 진행률·최근
 loss/평가지표·완료 여부를 보여주는 페이지 하나만 자동 새로고침으로 띄운다.
 외부 패키지 없이 파이썬 표준 라이브러리(http.server)만 사용.
 
+**DeepLabV3+는 아직 이 대시보드가 못 읽는다** — train_deeplabv3plus.py는 HF Trainer가
+아니라 직접 루프라 trainer_state.json이 없다(대신 TensorBoard 로그가 <output-dir>/tb/에
+쌓임). DeepLab 진행 현황은 그냥 `tensorboard --logdir <output-dir>/tb` 로 보거나,
+학습 콘솔 로그(epoch별 mean_iou 출력)를 직접 볼 것. 굳이 여기 추가하려면 last.pt의
+mtime/epoch 필드를 읽는 별도 로더를 JOBS에 붙이면 된다.
+
 실행:
-    /workspace/.venv/bin/python status_dashboard.py
+    /home/elicer/BridgeSense_DT/.venv/bin/python status_dashboard.py
     (기본 포트 6007 — VS Code PORTS 탭에서 forward해서 브라우저로 확인)
 """
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
-CHECKPOINTS_ROOT = Path("/workspace/ai/checkpoints")  # 모델별 체크포인트가 저장되는 상위 폴더
+CHECKPOINTS_ROOT = Path("/home/elicer/BridgeSense_DT/ai/checkpoints")  # 모델별 체크포인트가 저장되는 상위 폴더
 JOBS = {
     "rtdetr_v2": {"label": "RT-DETR v2", "script": "train_rtdetr.py"},  # 표시 이름과 실행 스크립트 파일명(프로세스 감지용)
 }

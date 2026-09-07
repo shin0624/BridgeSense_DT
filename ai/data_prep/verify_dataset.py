@@ -7,15 +7,15 @@ COCO 포맷 데이터셋(convert_to_coco.py 산출물)의 무결성을 점검한
 3. (선택, --check-images) 손상된 이미지 파일 탐지: PIL로 직접 열어서 확인 — 대용량 데이터셋에서
    느릴 수 있어 기본은 끔
 
-실행:
+실행 (엘리스 경로):
     python verify_dataset.py \
-        --json /workspace/data/coco_format/train.json \
-        --images-dir /workspace/data/aihub_extracted_full/Training/원천데이터
+        --json /home/elicer/BridgeSense_DT/data/coco_format/train.json \
+        --images-dir /home/elicer/BridgeSense_DT/data/aihub_extracted/Training/원천데이터
 
     # 손상 이미지까지 검사(전체 스캔이라 느림)
     python verify_dataset.py \
-        --json /workspace/data/coco_format/train.json \
-        --images-dir /workspace/data/aihub_extracted_full/Training/원천데이터 \
+        --json /home/elicer/BridgeSense_DT/data/coco_format/train.json \
+        --images-dir /home/elicer/BridgeSense_DT/data/aihub_extracted/Training/원천데이터 \
         --check-images
 """
 import argparse

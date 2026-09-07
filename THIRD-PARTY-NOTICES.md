@@ -45,20 +45,24 @@ License.
 
 ## AI models
 
-Base architecture fine-tuned for this project:
-
 - RT-DETR v2 (`PekingU/rtdetr_v2_r18vd` on Hugging Face, Apache License 2.0)
-  — object detection backbone for defect detection.
+  — object detection backbone for defect detection. Fine-tuned on AI-Hub data.
+- DeepLabV3+ (via `segmentation_models_pytorch`, MIT License) with a
+  ResNet-34 encoder — semantic segmentation for defect masks. Trained from
+  scratch on AI-Hub data (`encoder_weights=None`, no pretrained weights used
+  or downloaded — see `ai/CLAUDE.md` for why).
 
-The fine-tuned weights (`Assets/06.AI/models/rtdetr.onnx`) are not included
-in this repository (`.gitignore` excludes `*.onnx`) due to file size, but
-are published on Hugging Face:
+The fine-tuned weights (`Assets/06.AI/models/rtdetr.onnx`,
+`Assets/06.AI/models/deeplabv3plus.onnx`) are not included in this
+repository (`.gitignore` excludes `*.onnx`) due to file size, but are
+published on Hugging Face:
 
 - https://huggingface.co/shin0624/bridgesense-rtdetr
+- DeepLabV3+: (upload pending)
 
 To run AI inference from the source in this repository, download the
-compatible `rtdetr.onnx` from the link above and place it under
-`Assets/06.AI/models/`.
+compatible `rtdetr.onnx` / `deeplabv3plus.onnx` from the links above and
+place them under `Assets/06.AI/models/`.
 
 ## Test/reference imagery and data
 
