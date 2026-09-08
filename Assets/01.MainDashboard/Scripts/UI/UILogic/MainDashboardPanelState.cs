@@ -3,5 +3,6 @@ using UnityEngine;
 public enum MainDashboardPanelState
 {
     Input,
-    OverView
+    OverView,
+    Simulation
 }

@@ -13,7 +13,7 @@ public class PopupPanelController : MonoBehaviour
     [SerializeField] private Button elementLevelButton;
     [SerializeField] private Button inferenceStartButton; // "AI 분석 시작" 버튼
     [SerializeField] private Button reportButton;
-    [SerializeField] private Button simulationButton;     // "시뮬레이션" 버튼(아직 미구현)
+    [SerializeField] private Button simulationButton;     // "시뮬레이션" 버튼
     [SerializeField] private Button securityLevelCloseButton;
     [SerializeField] private Button elementLevelCloseButton;
     [SerializeField] private Button inferenceCheckCloseButton; // 추론 여부 체크 팝업 닫기 버튼
@@ -33,9 +33,6 @@ public class PopupPanelController : MonoBehaviour
         inferenceCheckCloseButton.onClick.AddListener(CloseInferenceCheckPopup);
         inferenceCheckNoButton.onClick.AddListener(CloseInferenceCheckPopup);
         reportButton.onClick.AddListener(OpenReportExportPopup);
-
-        if (simulationButton != null)
-            simulationButton.onClick.AddListener(OpenComingSoonPopup);
     }
     // 사이드 툴바는 모달이 아니므로 팝업 관리 대상에서 제외하고 직접 켠다.
     // MainDashboardManager가 관리하는 popupPanelParent는 컨테이너인 동시에 클릭을 막는 모달 배경이라,
@@ -73,11 +70,12 @@ public class PopupPanelController : MonoBehaviour
         MainDashboardManager.Instance.OpenPopupPanel(reportExportPopup);
     }
 
-    // 시뮬레이션 등 아직 구현하지 않은 기능의 버튼. 닫기는 팝업 자신(ComingSoonPopupController)이 처리한다.
+    // 아직 구현하지 않은 기능 전용 안내 팝업. 시뮬레이션이 구현된 뒤에도 다른 미구현 버튼이 재사용한다.
     private void OpenComingSoonPopup()
     {
         MainDashboardManager.Instance.OpenPopupPanel(comingSoonPopup);
     }
+
 
     private void CloseSecurityLevelPopup()
     {
@@ -105,8 +103,5 @@ public class PopupPanelController : MonoBehaviour
         inferenceCheckCloseButton.onClick.RemoveListener(CloseInferenceCheckPopup);
         inferenceCheckNoButton.onClick.RemoveListener(CloseInferenceCheckPopup);
         reportButton.onClick.RemoveListener(OpenReportExportPopup);
-
-        if (simulationButton != null)
-            simulationButton.onClick.RemoveListener(OpenComingSoonPopup);
     }
 }
