@@ -99,10 +99,10 @@ namespace BridgeSenseDT.Simulation
         {
             switch (preset)
             {
-                case EnvironmentPreset.Dry: return "상시 건조";
-                case EnvironmentPreset.WetDryCycle: return "습윤·건조 반복(누수·배수불량)";
-                case EnvironmentPreset.CoastalSalt: return "해안 염해";
-                default: return "내륙 일반";
+                case EnvironmentPreset.Dry: return "선택 : 상시 건조";
+                case EnvironmentPreset.WetDryCycle: return "선택 : 습윤·건조 반복";
+                case EnvironmentPreset.CoastalSalt: return "선택 : 해안·염해";
+                default: return "선택 : 내륙";
             }
         }
     }
