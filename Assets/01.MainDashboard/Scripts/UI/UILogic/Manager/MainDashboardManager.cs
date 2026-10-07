@@ -69,7 +69,13 @@ public class MainDashboardManager : MonoBehaviour
 
     public void SwitchToSimulationPanel()// 다른 패널에서 SimulationPanel로 전환하는 메서드
     {
-        if(simulationPanel != null && currentPanelState != MainDashboardPanelState.Simulation)
+        if (simulationPanel == null)
+        {
+            Debug.LogWarning("[MainDashboardManager] simulationPanel이 인스펙터에 연결돼 있지 않아 전환할 수 없습니다.", this);
+            return;
+        }
+
+        if(currentPanelState != MainDashboardPanelState.Simulation)
         {
             SwitchPanels(from: GetPanel(currentPanelState), to: simulationPanel);
             currentPanelState = MainDashboardPanelState.Simulation;

@@ -99,17 +99,30 @@ namespace BridgeSenseDT.Simulation
             };
         }
 
-        /// <summary>"N년 뒤 targetGrade 등급에 도달"의 N을 역산한다. 이미 그 등급 이하이면 0을 반환한다.</summary>
+        /// <summary>
+        /// "startYears 시점으로부터 targetGrade 등급에 도달하는 절대 경과 연수"를 역산한다.
+        /// startYears 시점에 이미 그 등급 이하이면 startYears를 그대로 반환한다(이미 도달).
+        ///
+        /// startYears를 받는 이유: 이 함수는 시뮬레이션 대시보드의 슬라이더가 가리키는 미래 시점에서
+        /// "거기서부터 추가로 몇 년을 더 기다려야 하는지"를 보여주는 역산 카드에 쓰인다. 항상 0년부터
+        /// 탐색하면 슬라이더를 움직여도 역산 결과가 바뀌지 않아 둘이 연결되지 않은 것처럼 보인다.
+        /// </summary>
         public static float YearsUntilGrade(
             string targetGrade, EnvironmentPreset preset, float coverDepthMm,
-            System.Func<SimulationInput, string> evaluateGradeAt)
+            float startYears, System.Func<SimulationInput, string> evaluateGradeAt)
         {
             // ConditionFactor가 단조 감소하고 그에 따라 등급도 단조 악화(또는 유지)되므로 이분 탐색으로 충분히 정확하다.
             // 닫힌 형태 역산은 AgingModel.YearsUntilConditionFactor가 제공하지만, 등급은 결함 주입 임계값과
             // SafetyGradeEvaluator의 비선형 계산을 거치므로 여기서는 안전하게 탐색으로 구한다.
             int targetRank = SafetyGradeEvaluator.GradeToRank(targetGrade);
+            startYears = Mathf.Max(0f, startYears);
 
-            float lo = 0f, hi = 1f;
+            // startYears 시점에 이미 목표 등급 이하면 더 찾을 것 없이 그 시점 자체가 답이다.
+            var startInput = new SimulationInput { Years = startYears, Environment = preset, CoverDepthMm = coverDepthMm };
+            if (SafetyGradeEvaluator.GradeToRank(evaluateGradeAt(startInput)) <= targetRank)
+                return startYears;
+
+            float lo = startYears, hi = Mathf.Max(startYears + 1f, 1f);
             const float maxYears = 200f;
 
             // 상한을 targetGrade 도달 시점 이상으로 늘려간다.

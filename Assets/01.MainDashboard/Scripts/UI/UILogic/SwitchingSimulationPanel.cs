@@ -13,6 +13,8 @@ public class SwitchingSimulationPanel : MonoBehaviour
     {
         if (toSimulationButton != null)
             toSimulationButton.onClick.AddListener(OnToSimulationClicked);
+        else
+            Debug.LogWarning("[SwitchingSimulationPanel] toSimulationButton이 인스펙터에 연결돼 있지 않습니다.", this);
 
         if (backButton != null)
             backButton.onClick.AddListener(OnToBackButtonClicked);
@@ -20,6 +22,7 @@ public class SwitchingSimulationPanel : MonoBehaviour
 
     private void OnToSimulationClicked()
     {
+        Debug.Log("[SwitchingSimulationPanel] 시뮬레이션 버튼 클릭됨", this);
         MainDashboardManager.Instance.SwitchToSimulationPanel();
     }
 

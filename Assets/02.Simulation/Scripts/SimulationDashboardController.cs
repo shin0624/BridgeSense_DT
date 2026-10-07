@@ -26,6 +26,7 @@ namespace BridgeSenseDT.Simulation
         [SerializeField] private Button baselineFromDesignSpecButton; // "준공년도 기준"
         [SerializeField] private GameObject baselineFromAnalysisSelectedMark; // 선택 표시(선택). 비워도 무방
         [SerializeField] private GameObject baselineFromDesignSpecSelectedMark;
+        
 
         [Header("환경 프리셋")]
         [SerializeField] private Button presetInlandButton;
@@ -37,6 +38,7 @@ namespace BridgeSenseDT.Simulation
         [Header("경과 연수 슬라이더")]
         [SerializeField] private Slider yearsSlider; // 0~100년 범위로 인스펙터에서 설정
         [SerializeField] private TMP_Text yearsValueText;
+        [SerializeField] private TMP_Text yearsValue;
 
         [Header("결과 표시")]
         [SerializeField] private TMP_Text gradeText;         // "A"~"E"
@@ -45,8 +47,11 @@ namespace BridgeSenseDT.Simulation
         [SerializeField] private Image gradeBadgeImage;      // 등급 배경색(선택, 비워도 무방)
 
         [Header("역산 카드 (E)")]
-        [SerializeField] private TMP_Dropdown targetGradeDropdown; // "B","C","D","E" 등 목표 등급 선택
         [SerializeField] private TMP_Text yearsUntilGradeText;     // "N년 뒤 D등급 도달 예상"
+
+        // 역산 목표 등급은 D(미흡, 정밀안전진단 대상)로 고정한다. 매뉴얼상 실무적으로 의미 있는
+        // 임계값이 사실상 D등급 하나뿐이라, 등급을 고를 수 있게 하는 드롭다운은 과한 유연성이었다.
+        private const string TargetGrade = "D";
 
         [Header("연결")]
         [SerializeField] private BridgeGradeVisualizer gradeVisualizer; // 비워두면 씬에서 자동 검색
@@ -95,17 +100,21 @@ namespace BridgeSenseDT.Simulation
 
             if (yearsSlider != null)
                 yearsSlider.onValueChanged.AddListener(_ => Recompute());
-
-            if (targetGradeDropdown != null)
-                targetGradeDropdown.onValueChanged.AddListener(_ => RefreshYearsUntilGradeCard());
         }
 
         /// <summary>패널이 켜질 때 AI 실측 리포트를 스냅샷으로 떠 둔다. 슬라이더를 움직여도 원본 리포트는 바뀌지 않는다.</summary>
         private void CaptureAnalysisBaseline()
         {
-            analysisBaselineSnapshot = AnalysisSessionManager.Instance != null
-                ? AnalysisSessionManager.Instance.LastReport
-                : null;
+            var manager = AnalysisSessionManager.Instance;
+            var report = manager != null ? manager.LastReport : null;
+            analysisBaselineSnapshot = report;
+
+            string managerId = manager != null ? manager.GetInstanceID().ToString() : "null";
+            string reportState = report != null ? "있음" : "null";
+            string gradeState = report != null && report.Bridge != null ? report.Bridge.grade : "null";
+            Debug.Log(
+                $"[SimulationDashboardController] CaptureAnalysisBaseline: manager={managerId}, LastReport={reportState}, Bridge={gradeState}",
+                this);
         }
 
         /// <summary>실측 결과가 없으면 FromAnalysis 버튼을 비활성화하고 자동으로 설계기준 모드로 전환한다.</summary>
@@ -154,6 +163,7 @@ namespace BridgeSenseDT.Simulation
             float sliderYears = yearsSlider != null ? yearsSlider.value : 0f;
             if (yearsValueText != null)
                 yearsValueText.text = $"{sliderYears:F0}년 뒤";
+                yearsValue.text = $"{yearsSlider.value}년 경과";
 
             var input = BuildSimulationInput(sliderYears);
             var report = ComputeReport(input);
@@ -206,42 +216,35 @@ namespace BridgeSenseDT.Simulation
                 gradeBadgeImage.color = GradeColorMap.GetColor(bridge.grade);
         }
 
-        /// <summary>"N년 뒤 목표등급 도달" 카드를 갱신한다. "N년"은 슬라이더와 같은 척도(지금부터 N년 후)로 맞춘다.</summary>
+        /// <summary>
+        /// "슬라이더가 가리키는 시점으로부터 목표등급까지 추가로 몇 년" 카드를 갱신한다.
+        /// 슬라이더를 움직일 때마다 Recompute()를 통해 다시 호출되므로, 슬라이더 위치에 따라
+        /// 매번 다른 값이 나온다(이미 그 시점에 목표등급 이하이면 "이미 도달"로 표시).
+        /// </summary>
         private void RefreshYearsUntilGradeCard()
         {
             if (yearsUntilGradeText == null)
                 return;
 
-            string targetGrade = ResolveTargetGrade();
-            if (string.IsNullOrEmpty(targetGrade))
-                return;
-
-            // YearsUntilGrade가 탐색하는 input.Years는 SimulationInput의 "절대 경과 연수"이므로,
-            // FromDesignSpec 모드에서 슬라이더 기준(지금부터 N년 후)으로 보여주려면 이미 지난 세월만큼 빼서 맞춘다.
-            float elapsedOffset = baselineMode == SimulationBaselineMode.FromDesignSpec
-                ? TryGetElapsedYearsSinceCompletion()
-                : 0f;
+            float sliderYears = yearsSlider != null ? yearsSlider.value : 0f;
+            float startAbsoluteYears = BuildSimulationInput(sliderYears).Years; // 슬라이더가 가리키는 절대 경과 연수
 
             System.Func<SimulationInput, string> evaluateGradeAt = input => ComputeReport(input).Bridge.grade;
 
-            float absoluteYears = SimulationEngine.YearsUntilGrade(targetGrade, environment, coverDepthMm, evaluateGradeAt);
+            float targetAbsoluteYears = SimulationEngine.YearsUntilGrade(
+                TargetGrade, environment, coverDepthMm, startAbsoluteYears, evaluateGradeAt);
 
-            if (float.IsPositiveInfinity(absoluteYears))
+            if (float.IsPositiveInfinity(targetAbsoluteYears))
             {
-                yearsUntilGradeText.text = $"현재 조건에서는 200년 내 {targetGrade}등급에 도달하지 않습니다.";
+                yearsUntilGradeText.text = $"현재 조건에서는 {TargetGrade}등급에 도달하지 않습니다.";
                 return;
             }
 
-            float yearsFromNow = Mathf.Max(0f, absoluteYears - elapsedOffset);
-            yearsUntilGradeText.text = $"현재 조건 유지 시 약 {yearsFromNow:F0}년 뒤 {targetGrade}등급 도달 예상";
-        }
+            float additionalYears = targetAbsoluteYears - startAbsoluteYears;
 
-        private string ResolveTargetGrade()
-        {
-            if (targetGradeDropdown == null || targetGradeDropdown.options.Count == 0)
-                return "D"; // 드롭다운을 아직 안 붙였으면 가장 흔히 쓰는 기준(D등급, 정밀안전진단 대상)으로 기본 계산
-
-            return targetGradeDropdown.options[targetGradeDropdown.value].text;
+            yearsUntilGradeText.text = additionalYears <= 0.5f
+                ? $"AI 분석 결과 시점에 이미 {TargetGrade}등급 이하 상태입니다."
+                : $"이 시점으로부터 약 {additionalYears:F0}년 뒤 {TargetGrade}등급 도달 예상";
         }
 
         /// <summary>
